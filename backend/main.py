@@ -1,9 +1,12 @@
 from fastapi import FastAPI
 from database import engine, Base
+from models import Producto
+from routes import Producto
 
 app = FastAPI()
 
 # Crear tablas
-@app.get("/")
-def read_root():
-    return {"message": "Welcome to the FastAPI Backend!"}
+Base.metadata.create_all(bind=engine)
+
+# Registrar las rutas de producto
+app.include_router(Producto.router, prefix="/productos", tags=["productos"])
