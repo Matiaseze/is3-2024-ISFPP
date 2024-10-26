@@ -29,6 +29,11 @@ services:
     build: ./backend
     container_name: fastapi_backend
     command: uvicorn main:app --host 0.0.0.0 --port 8000 --reload
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: is32024
+      POSTGRES_DB: electronica-db
+      POSTGRES_SERVER: postgres
     volumes:
       - ./backend:/app
     ports:

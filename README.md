@@ -96,10 +96,15 @@ El trabajo consiste en realizar las siguientes, especificaciones, modelos y diag
 
 ```plaintext
 .
-├── backend
-│   ├── Dockerfile
-│   ├── main.py
-│   ├── requirements.txt
+backend/
+├── main.py
+├── database.py            
+├── models/
+│   └── ... 
+├── routes/
+│   └── ...
+└── schemas/
+    └── ...   
 ├── frontend
 │   ├── Dockerfile
 │   ├── package.json
