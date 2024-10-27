@@ -106,6 +106,12 @@ backend/
 └── schemas/
     └── ...   
 ├── frontend
+|   ├── compoents/
+│   │   └── ...
+│   │   ├── Home.js 
+│   │   ├── NavBar.js
+│   │   └── static/
+│   │   │   └── ...
 │   ├── Dockerfile
 │   ├── package.json
 ├── docker-compose.yml
