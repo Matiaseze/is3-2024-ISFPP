@@ -1,78 +1,164 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import { Card, ListGroup, Container, Row, Col } from 'react-bootstrap';
-import 'bootstrap/dist/css/bootstrap.min.css';
+import { Container, Row, Col, Card, Button } from 'react-bootstrap';
 import ProductoModal from './ProductoModal';
+import FiltroProductos from './FiltroProductos'; // Importar el componente de filtro
 
 const ListarProductos = () => {
+    const [loading, setLoading] = useState(true);   // Indicador de carga
+    const [error, setError] = useState(null);       // Manejo de errores
     const [productos, setProductos] = useState([]);
-    const [loading, setLoading] = useState(true);
-    const [error, setError] = useState(null);
+    const [filteredProductos, setFilteredProductos] = useState([]);
     const [showModal, setShowModal] = useState(false);
-    const [productoSeleccionado, setProductoSeleccionado] = useState(null);
+    const [selectedProducto, setSelectedProducto] = useState(null);
+
+    // Filtros
+    const [nombreFilter, setNombreFilter] = useState('');
+    const [marcaFilter, setMarcaFilter] = useState('');
+    const [categoriaFilter, setCategoriaFilter] = useState('');
+    const [precioMin, setPrecioMin] = useState('');
+    const [precioMax, setPrecioMax] = useState('');
+
+    // Listas de marcas y categorías (puedes obtenerlas de tu API)
+    const [marcasDisponibles, setMarcasDisponibles] = useState([]);
+    const [categoriasDisponibles, setCategoriasDisponibles] = useState([]);
 
     useEffect(() => {
         const fetchProductos = async () => {
+
             try {
                 const response = await axios.get('http://localhost:8000/productos');
-                setProductos(response.data);
+                setProductos(response.data); // Actualizar la lista de productos
+                setFilteredProductos(response.data); // Inicialmente muestra todos los productos
+                // Marcas y categorias disponibles
+                const marcas = [...new Set(response.data.map(p => p.marca))];
+                const categorias = [...new Set(response.data.map(p => p.categoria))];
+                setMarcasDisponibles(marcas);
+                setCategoriasDisponibles(categorias);
             } catch (err) {
-                setError(err.message);
+                setError("Error al cargar productos"); // Mensaje en caso de error
             } finally {
-                setLoading(false);
+                setLoading(false); // Finaliza la carga
             }
-        };
 
+        };
+        
         fetchProductos();
     }, []);
 
+    useEffect(() => {
+        const filterProductos = () => {
+            let tempProductos = [...productos];
+
+            // Filtrar por nombre
+            if (nombreFilter) {
+                tempProductos = tempProductos.filter(producto => 
+                    producto.nombre.toLowerCase().includes(nombreFilter.toLowerCase())
+                );
+            }
+
+            // Filtrar por marca
+            if (marcaFilter) {
+                tempProductos = tempProductos.filter(producto => 
+                    producto.marca.toLowerCase() === marcaFilter.toLowerCase()
+                );
+            }
+
+            // Filtrar por categoría
+            if (categoriaFilter) {
+                tempProductos = tempProductos.filter(producto => 
+                    producto.categoria.toLowerCase() === categoriaFilter.toLowerCase()
+                );
+            }
+
+            // Filtrar por rango de precio
+            if (precioMin) {
+                tempProductos = tempProductos.filter(producto => 
+                    producto.precio >= precioMin
+                );
+            }
+
+            if (precioMax) {
+                tempProductos = tempProductos.filter(producto => 
+                    producto.precio <= precioMax
+                );
+            }
+
+            setFilteredProductos(tempProductos);
+        };
+
+        filterProductos();
+    }, [nombreFilter, marcaFilter, categoriaFilter, precioMin, precioMax, productos]);
+
     const handleShowModal = (producto) => {
-        setProductoSeleccionado(producto);
+        setSelectedProducto(producto);
         setShowModal(true);
     };
 
     const handleCloseModal = () => {
         setShowModal(false);
-        setProductoSeleccionado(null);
+        setSelectedProducto(null);
     };
 
-    if (loading) return <p>Cargando productos...</p>;
-    if (error) return <p>Error: {error}</p>;
+     // Actualiza la lista de productos cuando se guarda una edición
+     const handleProductoUpdated = (updatedProducto) => {
+        setProductos((prevProductos) =>
+            prevProductos.map((prod) =>
+                prod.idProducto === updatedProducto.idProducto ? updatedProducto : prod
+            )
+        );
+        setShowModal(false); // Cierra el modal
+    };
+
+    if (loading) return <p>Cargando productos...</p>; // Muestra mientras carga
+    if (error) return <p>{error}</p>; // Muestra el error
 
     return (
-        <Container className="mt-4">
-            <h1 className="text-center mb-4">Lista de Productos</h1>
+        <Container>
+            <h1>Listar Productos</h1>
+            {/* Usar el componente de filtro */}
+            <FiltroProductos 
+                nombreFilter={nombreFilter} 
+                setNombreFilter={setNombreFilter}
+                marcaFilter={marcaFilter} 
+                setMarcaFilter={setMarcaFilter}
+                categoriaFilter={categoriaFilter} 
+                setCategoriaFilter={setCategoriaFilter}
+                precioMin={precioMin} 
+                setPrecioMin={setPrecioMin}
+                precioMax={precioMax} 
+                setPrecioMax={setPrecioMax}
+                marcasDisponibles={marcasDisponibles}
+                categoriasDisponibles={categoriasDisponibles}
+            />
             <Row>
-                {productos.map((producto) => (
-                    <Col key={producto.idProducto} sm={12} md={6} lg={4} className="mb-4">
-                        <Card style={{ width: '18rem' }}>
+                {filteredProductos.map(producto => (
+                    <Col key={producto.id} sm={12} md={6} lg={4} className="mb-4">
+                        <Card>
                             <Card.Body>
-                                <Card.Link href="#" onClick={() => handleShowModal(producto)}>
-                                    {producto.nombre}
-                                </Card.Link>
-                            </Card.Body>
-                            <ListGroup className="list-group-flush">
-                                <ListGroup.Item><strong>Precio:</strong> ${producto.precio}</ListGroup.Item>
-                                <ListGroup.Item><strong>Stock:</strong> {producto.stock}</ListGroup.Item>
-                            </ListGroup>
-                            <Card.Body>
-                                <Card.Link href="#">Añadir al carrito</Card.Link>
+                                <Card.Title>{producto.nombre}</Card.Title>
+                                <Card.Subtitle className="mb-2 text-muted">{producto.marca}</Card.Subtitle>
+                                <Card.Text>
+                                    <strong>Categoría:</strong> {producto.categoria} <br />
+                                    <strong>Precio:</strong> ${producto.precio} <br />
+                                    <strong>Stock:</strong> {producto.stock}
+                                </Card.Text>
+                                <Button variant="info" onClick={() => handleShowModal(producto)}>
+                                    Ver Detalles
+                                </Button>
                             </Card.Body>
                         </Card>
                     </Col>
                 ))}
             </Row>
-
-            {/* Modal para detalles del producto */}
             <ProductoModal 
                 show={showModal} 
                 onHide={handleCloseModal} 
-                producto={productoSeleccionado} 
+                producto={selectedProducto} 
+                onProductoUpdated={handleProductoUpdated} 
             />
         </Container>
     );
 };
 
 export default ListarProductos;
-
-

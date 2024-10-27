@@ -16,7 +16,8 @@ def get_producto(idProducto: int, db: Session = Depends(get_db)):
 
 @router.get("/", response_model=List[ProductoResponse])
 def listar_productos(skip: int = 0, limit: int = 10, db: Session = Depends(get_db)):
-    productos = db.query(Producto).offset(skip).limit(limit).all()
+    # productos = db.query(Producto).offset(skip).limit(limit).all() # Esto solo devuelve 10 elementos, tambien puede servir por si hay que implementar varias paginas
+    productos = db.query(Producto).all() 
     return productos
 
 @router.post("/registrar", response_model=ProductoResponse)
