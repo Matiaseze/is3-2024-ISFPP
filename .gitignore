@@ -3,6 +3,7 @@ frontend/node_modules
 frontend/.env
 frontend/build
 frontend/.DS_Store
+Frontend/package-lock.json
 
 # Python (FastAPI Backend)
 backend/__pycache__/
