@@ -14,11 +14,13 @@ class DetallePedidoBase(BaseModel):
     cantidad: int
     subTotal: float
 
-class PedidoCreate(PedidoBase):
-    detalles: List[DetallePedidoBase]
+class DetallePedidoCreate(DetallePedidoBase):
+    pass
 
-class PedidoResponse(PedidoBase):
-    idPedido: int
+class PedidoCreate(PedidoBase):
+    detalles: List[DetallePedidoCreate]
+
+class PedidoResponse(PedidoBase): 
     fechaPedido: datetime
     detalles: List[DetallePedidoBase] = []
 

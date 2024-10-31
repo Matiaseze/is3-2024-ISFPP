@@ -2,6 +2,7 @@ from pydantic import BaseModel
 from typing import Optional
 
 class ProductoBase(BaseModel):
+    idProducto: int
     nombre: str
     descripcion: str
     marca: str
@@ -17,7 +18,6 @@ class ProductoUpdate(ProductoBase):
     baja: bool
 
 class ProductoResponse(ProductoBase):
-    idProducto: int
     baja: bool
 
     class Config:

@@ -1,10 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { Container, Row, Col, Card, Button } from 'react-bootstrap';
+ 
 import ProductoModal from './ProductoModal';
 import FiltroProductos from './FiltroProductos'; // Importar el componente de filtro
 
-const ListarProductos = () => {
+
+
+const ListarProductos = ({ agregarAlCarrito }) => {
     const [loading, setLoading] = useState(true);   // Indicador de carga
     const [error, setError] = useState(null);       // Manejo de errores
     const [productos, setProductos] = useState([]);
@@ -110,6 +113,11 @@ const ListarProductos = () => {
         setShowModal(false); // Cierra el modal
     };
 
+    const handleAgregarAlCarrito = (producto) => {
+        agregarAlCarrito(producto);
+    };
+
+
     if (loading) return <p>Cargando productos...</p>; // Muestra mientras carga
     if (error) return <p>{error}</p>; // Muestra el error
 
@@ -143,6 +151,9 @@ const ListarProductos = () => {
                                     <strong>Precio:</strong> ${producto.precio} <br />
                                     <strong>Stock:</strong> {producto.stock}
                                 </Card.Text>
+                                <Button variant="primary" onClick={() => handleAgregarAlCarrito(producto)}>
+                                    Agregar al Carrito
+                                </Button>
                                 <Button variant="info" onClick={() => handleShowModal(producto)}>
                                     Ver Detalles
                                 </Button>
