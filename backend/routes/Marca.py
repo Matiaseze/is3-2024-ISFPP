@@ -43,7 +43,7 @@ def crear_marca(marca: MarcaCreate, db: Session = Depends(get_db)):
 def modificar_marca(idMarca: int, marca: MarcaUpdate, db: Session = Depends(get_db)):
     db_marca = obtener_marca(idMarca, db)
     
-    for key, value in marca.dict().items():
+    for key, value in marca.dict(exclude_unset=True).items():
         setattr(db_marca, key, value)
 
     db.commit()

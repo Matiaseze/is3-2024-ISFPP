@@ -10,9 +10,9 @@ class MarcaCreate(MarcaBase):
     pass
 
 class MarcaUpdate(BaseModel):
-    nombre: Optional[str] = None
-    descripcion: Optional[str] = None
-    baja: Optional[bool] = None
+    nombre: str | None = None
+    descripcion: str | None = None
+    baja: bool | None = None
 
     class Config:
         orm_mode = True 

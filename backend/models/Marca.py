@@ -7,6 +7,6 @@ class Marca(Base):
 
     idMarca = Column(Integer, primary_key=True, index=True)
     nombre = Column(String, nullable=False)
-    descripcion = Column(String, nullable=False)
+    descripcion = Column(String, nullable=True)
     baja = Column(Boolean, default=False)
     
