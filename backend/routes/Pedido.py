@@ -1,10 +1,10 @@
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 from models.Pedido import Pedido, DetallePedido
-from models.Pedido import Producto
+from models.Producto import Producto
 from schemas.Pedido import PedidoCreate, PedidoResponse
 from database import get_db
-from typing import List
+
 
 router = APIRouter()
 

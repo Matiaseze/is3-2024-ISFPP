@@ -6,14 +6,34 @@ import editIcon from '../../static/img/edit-button.png';
 import saveIcon from '../../static/img/floppy-disk.png';
 
 const ProductoModal = ({ show, onHide, producto, onProductoUpdated }) => {
+    const [marca, setMarca]  = useState('');
+    const [marcas, setMarcas]  = useState([]);
+    const [error, setError] = useState(null);
     const [isEditing, setIsEditing] = useState(false);
     const [editedProducto, setEditedProducto] = useState({ ...producto });
+
 
     useEffect(() => {
         if (producto) {
             setEditedProducto({ ...producto });
+            setMarca(producto.marca || ""); // Asigna la marca actual del producto
         }
+        const fetchMarcas = async () => {
+            try {
+                const response = await axios.get('http://localhost:8000/marcas'); // Cambia la URL si es necesario
+                setMarcas(response.data);
+            } catch (err) {
+                setError(err.message);
+            }
+        };
+        fetchMarcas();
     }, [producto]);
+
+    useEffect(() => {
+        if (!show) {
+            setIsEditing(false); // Salir del modo edición al cerrar el modal
+        }
+    }, [show]);
 
     const handleInputChange = (e) => {
         const { name, value } = e.target;
@@ -44,6 +64,7 @@ const ProductoModal = ({ show, onHide, producto, onProductoUpdated }) => {
             </Modal.Header>
             <Modal.Body>
                 <Container>
+                {error && <p className="text-danger">{error}</p>}
                 <div style={{ display: 'flex', justifyContent: 'flex-start', marginBottom: '15px' }}>
                     <Button
                         variant="outline-primary"
@@ -90,13 +111,23 @@ const ProductoModal = ({ show, onHide, producto, onProductoUpdated }) => {
                                 </Form.Group>
                                 <Form.Group controlId="marca">
                                     <Form.Label>Marca</Form.Label>
-                                    <Form.Control
-                                        type="text"
-                                        name="marca"
-                                        value={editedProducto.marca || ""}
-                                        onChange={handleInputChange}
-                                        readOnly={!isEditing}
-                                    />
+                                    <Form.Select
+                                        value={marca || ""}
+                                        onChange={(e) => {
+                                            const selectedMarca = e.target.value;
+                                            setMarca(selectedMarca);
+                                            setEditedProducto({ ...editedProducto, marca: selectedMarca });
+                                        }}
+                                        disabled={!isEditing} // Deshabilitar cuando no esté en modo edición
+                                    >
+                                        {/* Solo muestra la opción de "Selecciona una marca" si no hay ninguna seleccionada */}
+                                        {!marca && <option value="">Selecciona una marca</option>}
+                                        {marcas.map((marcaItem, index) => (
+                                            <option key={index} value={marcaItem}>
+                                                {marcaItem}
+                                            </option>
+                                        ))}
+                                    </Form.Select>
                                 </Form.Group>
                                 <Form.Group controlId="precio">
                                     <Form.Label>Precio</Form.Label>
