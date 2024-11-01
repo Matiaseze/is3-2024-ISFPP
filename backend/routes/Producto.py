@@ -51,7 +51,7 @@ def modificar_producto(idProducto: int, producto: ProductoUpdate, db: Session = 
     db.refresh(db_producto)
     return db_producto
 
-@router.delete("/{idProducto}")
+@router.delete("/{idProducto}/baja")
 def baja_producto(idProducto: int, db: Session = Depends(get_db)):
     db_producto = db.query(Producto).filter(Producto.idProducto == idProducto).first()
     if not db_producto:

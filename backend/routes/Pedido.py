@@ -2,9 +2,9 @@ from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 from models.Pedido import Pedido, DetallePedido
 from models.Producto import Producto
-from schemas.Pedido import PedidoCreate,PedidoResponse, PedidoBase
+from schemas.Pedido import PedidoCreate, PedidoResponse, DetallePedidoResponse
 from database import get_db
-
+from typing import List
 
 router = APIRouter()
 
@@ -43,3 +43,23 @@ def crear_pedido(pedido: PedidoCreate, db: Session = Depends(get_db)):
 
     db.commit()
     return nuevo_pedido
+
+@router.get("/", response_model=List[PedidoResponse])
+def listar_pedidos(db: Session = Depends(get_db)):
+    pedidos = db.query(Pedido).all() 
+    return pedidos
+
+# Le falta un control mas para cuando el pedido esta asociado a uno o mas pagos
+@router.delete("/{idPedido}/cancelar", response_model=PedidoResponse, status_code=200)
+def cancelar_pedido(idPedido: int, db: Session = Depends(get_db)):
+    db_pedido = db.query(Pedido).filter(Pedido.idPedido == idPedido).first()
+    if not db_pedido:
+        raise HTTPException(status_code=404, detail="El pedido no existe.")
+    db_pedido.cancelado = True
+    db.commit()
+    return db_pedido
+
+@router.get("/{idPedido}/detalles", response_model=List[DetallePedidoResponse])
+def listar_detalles_de_pedido(idPedido: int, db: Session = Depends(get_db)):
+    detalles_pedido = db.query(DetallePedido).filter(DetallePedido.idPedido == idPedido).all() 
+    return detalles_pedido

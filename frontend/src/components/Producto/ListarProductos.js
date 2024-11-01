@@ -7,7 +7,7 @@ import FiltroProductos from './FiltroProductos'; // Importar el componente de fi
 
 
 
-const ListarProductos = ({ agregarAlCarrito }) => {
+const ListarProductos = ({ agregarAlCarrito, setVistaActual  }) => {
     const [loading, setLoading] = useState(true);   // Indicador de carga
     const [error, setError] = useState(null);       // Manejo de errores
     const [productos, setProductos] = useState([]);
@@ -25,6 +25,11 @@ const ListarProductos = ({ agregarAlCarrito }) => {
     // Listas de marcas y categorías (puedes obtenerlas de tu API)
     const [marcasDisponibles, setMarcasDisponibles] = useState([]);
     const [categoriasDisponibles, setCategoriasDisponibles] = useState([]);
+
+    useEffect(() => {
+        setVistaActual('catalogo'); // Actualiza la vista actual a "catalogo"
+        // Aquí podrías agregar la lógica para listar los productos
+    }, [setVistaActual]);
 
     useEffect(() => {
         const fetchProductos = async () => {

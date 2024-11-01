@@ -20,9 +20,16 @@ class DetallePedidoCreate(DetallePedidoBase):
 class PedidoCreate(PedidoBase):
     detalles: List[DetallePedidoCreate]
 
-class PedidoResponse(PedidoBase): 
+class PedidoResponse(PedidoBase):
+    idPedido: int 
     fechaPedido: datetime
     detalles: List[DetallePedidoBase] = []
+
+    class Config:
+        orm_mode = True
+
+class DetallePedidoResponse(DetallePedidoBase):
+    id: int
 
     class Config:
         orm_mode = True
