@@ -20,7 +20,7 @@ def listar_productos(skip: int = 0, limit: int = 10, db: Session = Depends(get_d
     productos = db.query(Producto).all() 
     return productos
 
-@router.post("/registrar", response_model=ProductoResponse)
+@router.post("/registrar", response_model=ProductoResponse, status_code=201)
 def crear_producto(producto: ProductoCreate, db: Session = Depends(get_db)):
     db_producto = db.query(Producto).filter(Producto.nombre == producto.nombre).first()
     if db_producto:

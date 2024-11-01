@@ -27,12 +27,11 @@ const AltaProducto = () => {
         };
     
         try {
-            // console.log("Datos a enviar:", nuevoProducto); // Para verificar que todo este bien
             const response = await axios.post('http://localhost:8000/productos/registrar', nuevoProducto);
-            if (response.status === 200) {
+            console.log(response.status)
+            if (response.status === 201) {
                 setSuccess(true);
                 setError(null);
-                // Limpiar campos
                 setNombre('');
                 setDescripcion('');
                 setMarca('');
@@ -43,9 +42,11 @@ const AltaProducto = () => {
                 setTimeout(() => {
                     setSuccess(false);
                 }, 3000);
+                alert("¡El producto se añadió con éxito!")
             }
         } catch (err) {
             //logs por si algo falla
+            alert(error)
             console.error("Error de solicitud:", err.response);
             setError(err.response.data.detail || "Error desconocido");
             setSuccess(false);
@@ -76,8 +77,6 @@ const AltaProducto = () => {
     return (
         <Container className="mt-4">
             <h1 className="text-center mb-4">Alta de Producto</h1>
-            {error && <p className="text-danger">{error}</p>}
-            {success && <p className="text-success">¡El producto se añadió con éxito!</p>}
             <Form onSubmit={handleSubmit}>
                 <Form.Group controlId="formNombre">
                     <Form.Label>Nombre</Form.Label>

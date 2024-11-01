@@ -8,7 +8,7 @@ from database import get_db
 
 router = APIRouter()
 
-@router.post("/crear_pedido", response_model=PedidoResponse)
+@router.post("/crear_pedido", response_model=PedidoResponse, status_code=201)
 def crear_pedido(pedido: PedidoCreate, db: Session = Depends(get_db)):
     print(pedido)
     

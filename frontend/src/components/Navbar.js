@@ -39,7 +39,7 @@ const NavbarApp = ({ carrito, setCarrito }) => {
     
         try {
             const response = await axios.post('http://localhost:8000/pedidos/crear_pedido', pedido);
-            if (response.status === 200) {
+            if (response.status === 201) {
                 alert("Pedido creado con éxito.");
                 setCarrito([]); // Limpia el carrito después de la compra
             }
