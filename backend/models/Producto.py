@@ -1,4 +1,5 @@
 from sqlalchemy import Column, Integer, String, Float, Boolean
+from sqlalchemy.orm import relationship
 from database import Base
 
 class Producto(Base):
@@ -12,3 +13,5 @@ class Producto(Base):
     stock = Column(Integer, nullable=False)
     categoria = Column(String, nullable=False)
     baja = Column(Boolean, default=False)
+
+    detalles_pedido = relationship("DetallePedido", back_populates="producto")

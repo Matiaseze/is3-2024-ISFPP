@@ -20,9 +20,9 @@ def listar_productos(skip: int = 0, limit: int = 10, db: Session = Depends(get_d
     productos = db.query(Producto).all() 
     return productos
 
-@router.post("/registrar", response_model=ProductoResponse)
+@router.post("/registrar", response_model=ProductoResponse, status_code=201)
 def crear_producto(producto: ProductoCreate, db: Session = Depends(get_db)):
-    db_producto = db.query(Producto).filter(Producto.descripcion == producto.descripcion).first()
+    db_producto = db.query(Producto).filter(Producto.nombre == producto.nombre).first()
     if db_producto:
         raise HTTPException(status_code=400, detail="El producto ya existe.")
     if not producto.marca:
@@ -51,7 +51,7 @@ def modificar_producto(idProducto: int, producto: ProductoUpdate, db: Session = 
     db.refresh(db_producto)
     return db_producto
 
-@router.delete("/{idProducto}")
+@router.delete("/{idProducto}/baja")
 def baja_producto(idProducto: int, db: Session = Depends(get_db)):
     db_producto = db.query(Producto).filter(Producto.idProducto == idProducto).first()
     if not db_producto:
