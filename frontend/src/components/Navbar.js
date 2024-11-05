@@ -56,6 +56,12 @@ const NavbarApp = ({ carrito, setCarrito, vistaActual }) => {
                     </NavDropdown>
                 </Nav>
                 <Nav className="mx-auto">
+                    <NavDropdown title="Marcas" id="navbarScrollingDropdown">
+                        <NavDropdown.Item href="/marcas/registrar">Registrar nueva Marca</NavDropdown.Item>
+                        <NavDropdown.Item href="/marcas">Catálogo</NavDropdown.Item>
+                    </NavDropdown>
+                </Nav>
+                <Nav className="mx-auto">
                     <NavDropdown title="Pedidos" id="navbarScrollingDropdown">
                         <NavDropdown.Item href="/pedidos">Listado de pedidos</NavDropdown.Item>
                     </NavDropdown>

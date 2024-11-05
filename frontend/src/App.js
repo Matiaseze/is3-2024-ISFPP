@@ -4,6 +4,7 @@ import Home from './components/Home';
 import Navbar from './components/Navbar';
 import { ListarProductos, AltaProducto } from './components/Producto';
 import { ListarPedidos } from './components/Pedido';
+import { AltaMarca } from './components/Marca'
 
 const App = () => {
 
@@ -22,6 +23,7 @@ const App = () => {
                 <Route path="/productos" element={<ListarProductos agregarAlCarrito={agregarAlCarrito} setVistaActual={setVistaActual} />} />
                 <Route path="/productos/registrar" element={<AltaProducto setVistaActual={setVistaActual} />} />
                 <Route path="/pedidos" element={<ListarPedidos setVistaActual={setVistaActual} />} />
+                <Route path="/marcas/registrar" element={<AltaMarca setVistaActual={setVistaActual} />} />
             </Routes>
         </Router>
     );
