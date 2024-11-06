@@ -1,7 +1,7 @@
 from fastapi import FastAPI
 from database import engine, Base
-from models import Producto, Pedido
-from routes import Producto, Pedido
+from models import Producto, Pedido, Marca
+from routes import Producto, Pedido, Marca
 from fastapi.middleware.cors import CORSMiddleware
 
 app = FastAPI()
@@ -44,3 +44,5 @@ Base.metadata.create_all(bind=engine)
 # Registrar las rutas de producto
 app.include_router(Producto.router, prefix="/productos", tags=["productos"])
 app.include_router(Pedido.router, prefix="/pedidos", tags=["pedidos"])
+
+app.include_router(Marca.router, prefix="/marcas", tags=["marcas"])
