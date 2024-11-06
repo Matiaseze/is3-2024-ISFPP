@@ -10,8 +10,8 @@ class TipoDoc(enum.Enum):
 
 class Cliente(Base):
     __tablename__ = "clientes"
-
-    dni = Column(Integer, primary_key=True, index=True)
+    idCliente = Column(Integer, primary_key=True, index=True)
+    dni = Column(Integer, nullable=False)
     tipoDoc = Column(Enum(TipoDoc), nullable=False)
     nombre = Column(String, nullable=False)
     apellido = Column(String, nullable=False)
@@ -21,3 +21,9 @@ class Cliente(Base):
 
     # Define la relación con Localidad
     localidad = relationship("Localidad", back_populates="clientes")
+
+    # Relacion con pedido
+    pedidos = relationship("Pedido", back_populates="cliente")
+
+    
+

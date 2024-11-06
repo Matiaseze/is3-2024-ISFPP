@@ -1,13 +1,14 @@
 from pydantic import BaseModel
 from typing import Optional
+from schemas.Marca import MarcaResponse
 
 class ProductoBase(BaseModel):
     nombre: str
     descripcion: str
-    marca: str
+    marca: MarcaResponse
     precio: float
     stock: int
-    categoria: str
+    categoria: str # Añadir la categoria mas tarde
     
 
 class ProductoCreate(ProductoBase):

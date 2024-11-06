@@ -1,5 +1,5 @@
 from pydantic import BaseModel
-from typing import Optional
+from typing import Optional, List
 from schemas.Localidad import LocalidadResponse
 from models.Cliente import TipoDoc  # Importa el enumerado TipoDoc
 

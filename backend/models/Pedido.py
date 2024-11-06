@@ -1,19 +1,29 @@
-from sqlalchemy import Column, Integer, String, Float, Boolean, ForeignKey, DateTime
+from sqlalchemy import Column, Integer, String, Float, Boolean, ForeignKey, DateTime, Enum
 from sqlalchemy.orm import relationship
 from datetime import datetime
 from database import Base
+import enum
+class EstadoPedido(enum.Enum):
+    INICIADO = "INICIADO"
+    PAGADO = "PAGADO"
+    CANCELADO = "CANCELADO"
 
 class Pedido(Base):
     __tablename__= "pedidos"
 
     idPedido = Column(Integer, primary_key=True, index=True)
     fechaPedido = Column(DateTime, default=datetime.now())
-    nombreCliente = Column(String, index=True) # cambiar por idCliente
     montoTotal = Column(Float, nullable=False)
-    cancelado = Column(Boolean, default=False)
+    estado = Column(Enum(EstadoPedido), default=EstadoPedido.INICIADO)
 
+    idCliente = Column(Integer, ForeignKey("clientes.idCliente"))
+    cliente = relationship("Cliente", back_populates="pedidos")
+
+    pagos = relationship("Pagos", back_populates="pedido")
+    
     detalles = relationship("DetallePedido", back_populates="pedido")
     
+
 
 class DetallePedido(Base):
     __tablename__ = 'detalle_pedido'
