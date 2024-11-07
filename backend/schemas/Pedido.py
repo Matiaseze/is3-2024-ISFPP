@@ -2,14 +2,13 @@ from pydantic import BaseModel
 from typing import List, Optional
 from datetime import datetime
 from schemas.Producto import ProductoResponse
-from schemas.Cliente import ClienteResponse
 from models.Pedido import EstadoPedido
 class PedidoBase(BaseModel):
     montoTotal: float
     estado: EstadoPedido
 
 class DetallePedidoBase(BaseModel):
-    producto: ProductoResponse
+    idProducto: int
     precioUnitario: float
     cantidad: int
     subTotal: float
@@ -24,7 +23,7 @@ class PedidoCreate(PedidoBase):
 class PedidoResponse(PedidoBase):
     idPedido: int 
     fechaPedido: datetime
-    cliente: ClienteResponse
+    idCliente: int
     detalles: List[DetallePedidoBase] = []
 
     class Config:

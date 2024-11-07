@@ -5,9 +5,10 @@ from database import Base
 class Localidad(Base):
     __tablename__ = "localidades"
 
-    codPostal = Column(Integer, primary_key=True, index=True)
+    idLocalidad = Column(Integer, primary_key=True, index=True)
+    codPostal = Column(Integer, nullable=False, index=True)
     nombre = Column(String, nullable=False)
-    baja = Column(Boolean, default=False)
+
 
     # Relación inversa con Cliente
     clientes = relationship("Cliente", back_populates="localidad")

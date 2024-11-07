@@ -3,16 +3,16 @@ from typing import Optional
 
 class LocalidadBase(BaseModel):
     nombre: str
+    codPostal: int
 
 class LocalidadCreate(LocalidadBase):
     pass
 
 class LocalidadUpdate(LocalidadBase):
-    baja: bool
+    pass
 
 class LocalidadResponse(LocalidadBase):
-    codPostal: int
-    baja: bool
+    idLocalidad: int
 
     class Config:
         orm_mode = True

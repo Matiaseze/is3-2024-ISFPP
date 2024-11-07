@@ -1,14 +1,15 @@
 from pydantic import BaseModel
 from typing import Optional, List
-from schemas.Localidad import LocalidadResponse
+from schemas.Localidad import LocalidadCreate
 from models.Cliente import TipoDoc  # Importa el enumerado TipoDoc
 
 class ClienteBase(BaseModel):
     nombre: str
     apellido: str
-    domicilio: str
+    dni: int
     tipoDoc: TipoDoc
-    localidad: LocalidadResponse
+    domicilio: str
+    localidad: LocalidadCreate
 
 class ClienteCreate(ClienteBase):
     pass
@@ -17,7 +18,7 @@ class ClienteUpdate(ClienteBase):
     baja: bool
 
 class ClienteResponse(ClienteBase):
-    dni: int
+    idCliente: int
     baja: bool
 
     class Config:

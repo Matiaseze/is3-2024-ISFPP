@@ -1,6 +1,6 @@
 from fastapi import FastAPI
 from database import engine, Base
-from models import Producto, Pedido, Marca, Cliente, Localidad
+from models import Producto, Pedido, Marca, Cliente, Localidad, Pago
 from routes import Producto, Pedido, Marca, Cliente, Localidad
 from fastapi.middleware.cors import CORSMiddleware
 
@@ -22,21 +22,21 @@ categorias = [
     "Alimentos",
     "Juguetes"
 ]
-# Categorias de ejemplo para probar el formulario de alta producto BORRAR DESPUES
-marcas = [
-    "Motorola",
-    "Asus",
-    "LG",
-    "MSI"
-]
+# # Marcas de ejemplo para probar el formulario de alta producto BORRAR DESPUES
+# marcas = [
+#     "Motorola",
+#     "Asus",
+#     "LG",
+#     "MSI"
+# ]
 
 @app.get("/categorias")
 async def get_categorias():
     return categorias
 
-@app.get("/marcas")
-async def get_marcas():
-    return marcas
+# @app.get("/marcas")
+# async def get_marcas():
+#     return marcas
 
 # Crear tablas
 Base.metadata.create_all(bind=engine)

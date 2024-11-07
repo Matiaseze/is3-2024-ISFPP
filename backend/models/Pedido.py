@@ -19,7 +19,7 @@ class Pedido(Base):
     idCliente = Column(Integer, ForeignKey("clientes.idCliente"))
     cliente = relationship("Cliente", back_populates="pedidos")
 
-    pagos = relationship("Pagos", back_populates="pedido")
+    pagos = relationship("Pago", back_populates="pedido")
     
     detalles = relationship("DetallePedido", back_populates="pedido")
     

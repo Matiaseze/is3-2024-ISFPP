@@ -123,8 +123,8 @@ const ProductoModal = ({ show, onHide, producto, onProductoUpdated }) => {
                                         {/* Solo muestra la opción de "Selecciona una marca" si no hay ninguna seleccionada */}
                                         {!marca && <option value="">Selecciona una marca</option>}
                                         {marcas.map((marcaItem, index) => (
-                                            <option key={index} value={marcaItem}>
-                                                {marcaItem}
+                                            <option key={index} value={marcaItem.idMarca}>
+                                                {marcaItem.nombre}
                                             </option>
                                         ))}
                                     </Form.Select>

@@ -1,10 +1,31 @@
-import React from 'react';
-import { Container, Nav, Navbar, NavDropdown, Button } from 'react-bootstrap';
+import React, { useState, useEffect } from 'react';
+import { Container, Nav, Navbar, NavDropdown, Button, Form } from 'react-bootstrap';
 import axios from 'axios';
 
 const NavbarApp = ({ carrito, setCarrito, vistaActual }) => {
+    const [clientes, setClientes] = useState([]);
+    const [clienteSeleccionado, setClienteSeleccionado] = useState(null);
+
+    // Obtener los clientes al cargar el componente
+    useEffect(() => {
+        const fetchClientes = async () => {
+            try {
+                const response = await axios.get('http://localhost:8000/clientes/');  // Asumiendo que la URL de clientes es esta
+                setClientes(response.data);
+            } catch (error) {
+                console.error("Error al obtener los clientes", error);
+            }
+        };
+
+        fetchClientes();
+    }, []);
 
     const manejarCompra = async () => {
+        if (!clienteSeleccionado) {
+            alert("Por favor, selecciona un cliente.");
+            return;
+        }
+
         const productosConDetalles = await Promise.all(carrito.map(async producto => {
             const response = await axios.get(`http://localhost:8000/productos/${producto.idProducto}`);
             const productoDetalles = response.data;
@@ -14,7 +35,7 @@ const NavbarApp = ({ carrito, setCarrito, vistaActual }) => {
                     idProducto: productoDetalles.idProducto,
                     nombre: productoDetalles.nombre,
                     descripcion: productoDetalles.descripcion,
-                    marca: productoDetalles.marca,
+                    marca: productoDetalles.idMarca,
                     precio: productoDetalles.precio,
                     stock: productoDetalles.stock,
                     categoria: productoDetalles.categoria,
@@ -27,7 +48,8 @@ const NavbarApp = ({ carrito, setCarrito, vistaActual }) => {
         }));
 
         const pedido = {
-            nombreCliente: "Juan",
+            nombreCliente: clienteSeleccionado.nombre,  // Usar el nombre del cliente seleccionado
+            idCliente: clienteSeleccionado.idCliente,  // Incluir el idCliente
             montoTotal: carrito.reduce((acc, p) => acc + p.precio, 0),
             cancelado: false,
             detalles: productosConDetalles,
@@ -35,6 +57,7 @@ const NavbarApp = ({ carrito, setCarrito, vistaActual }) => {
 
         try {
             const response = await axios.post('http://localhost:8000/pedidos/crear_pedido', pedido);
+            console.log(pedido)
             if (response.status === 201) {
                 alert("Pedido creado con éxito.");
                 setCarrito([]);
@@ -75,6 +98,28 @@ const NavbarApp = ({ carrito, setCarrito, vistaActual }) => {
                                     <NavDropdown.Divider />
                                     <NavDropdown.Item>
                                         <strong>Total:</strong> ${carrito.reduce((acc, p) => acc + p.precio, 0)}
+                                    </NavDropdown.Item>
+                                    <NavDropdown.Item>
+                                        {/* Dropdown para seleccionar el cliente */}
+                                        <Form.Group controlId="clienteSeleccionado">
+                                            <Form.Label>Selecciona un cliente</Form.Label>
+                                            <Form.Control
+                                                as="select"
+                                                value={clienteSeleccionado ? clienteSeleccionado.idCliente : ''}
+                                                onChange={(e) => {
+                                                    const clienteId = e.target.value;
+                                                    const cliente = clientes.find(c => c.idCliente.toString() === clienteId);
+                                                    setClienteSeleccionado(cliente);
+                                                }}
+                                            >
+                                                <option value="">Elige un cliente</option>
+                                                {clientes.map(cliente => (
+                                                    <option key={cliente.idCliente} value={cliente.idCliente}>
+                                                        {cliente.nombre} {cliente.apellido}
+                                                    </option>
+                                                ))}
+                                            </Form.Control>
+                                        </Form.Group>
                                     </NavDropdown.Item>
                                     <NavDropdown.Item className="text-center">
                                         <Button variant="success" onClick={manejarCompra}>

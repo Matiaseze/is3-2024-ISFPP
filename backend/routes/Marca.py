@@ -25,7 +25,8 @@ def get_marca(idMarca: int, db: Session = Depends(get_db)):
 
 @router.get("/", response_model=List[MarcaResponse])
 def listar_marcas(skip: int = 0, limit: int = 10, db: Session = Depends(get_db)):
-    marcas = db.query(Marca).filter(Marca.baja == False).offset(skip).limit(limit).all()
+    # marcas = db.query(Marca).filter(Marca.baja == False).offset(skip).limit(limit).all()
+    marcas = db.query(Marca).all()
     return marcas
 
 @router.post("/registrar", response_model=MarcaResponse)

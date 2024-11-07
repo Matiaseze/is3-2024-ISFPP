@@ -21,7 +21,7 @@ class Cliente(Base):
 
     # Define la relación con Localidad
     localidad = relationship("Localidad", back_populates="clientes")
-
+    pagos = relationship("Pago", back_populates="cliente")
     # Relacion con pedido
     pedidos = relationship("Pedido", back_populates="cliente")
 

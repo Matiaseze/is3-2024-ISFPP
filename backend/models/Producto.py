@@ -14,8 +14,6 @@ class Producto(Base):
     baja = Column(Boolean, default=False)
 
     idMarca = Column(Integer, ForeignKey("marcas.idMarca"), nullable=False)
-
     marca = relationship("Marca", back_populates="productos")
-
 
     detalles_pedido = relationship("DetallePedido", back_populates="producto")

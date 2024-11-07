@@ -28,7 +28,6 @@ const AltaProducto = () => {
     
         try {
             const response = await axios.post('http://localhost:8000/productos/registrar', nuevoProducto);
-            console.log(response.status)
             if (response.status === 201) {
                 setSuccess(true);
                 setError(null);
@@ -109,7 +108,7 @@ const AltaProducto = () => {
                     >
                         <option value="">Selecciona una marca</option>
                         {marcas.map((cat, index) => (
-                            <option key={index} value={cat}>{cat}</option>
+                            <option key={index} value={cat.idMarca}>{cat.nombre}</option>
                         ))}
                     </Form.Select>
                 </Form.Group>

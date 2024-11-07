@@ -1,13 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { Container, Row, Col, Card, Button } from 'react-bootstrap';
- 
+
 import ProductoModal from './ProductoModal';
 import FiltroProductos from './FiltroProductos'; // Importar el componente de filtro
 
-
-
-const ListarProductos = ({ agregarAlCarrito, setVistaActual  }) => {
+const ListarProductos = ({ agregarAlCarrito, setVistaActual }) => {
     const [loading, setLoading] = useState(true);   // Indicador de carga
     const [error, setError] = useState(null);       // Manejo de errores
     const [productos, setProductos] = useState([]);
@@ -33,7 +31,6 @@ const ListarProductos = ({ agregarAlCarrito, setVistaActual  }) => {
 
     useEffect(() => {
         const fetchProductos = async () => {
-
             try {
                 const response = await axios.get('http://localhost:8000/productos');
                 setProductos(response.data); // Actualizar la lista de productos
@@ -48,7 +45,6 @@ const ListarProductos = ({ agregarAlCarrito, setVistaActual  }) => {
             } finally {
                 setLoading(false); // Finaliza la carga
             }
-
         };
         
         fetchProductos();
@@ -108,8 +104,8 @@ const ListarProductos = ({ agregarAlCarrito, setVistaActual  }) => {
         setSelectedProducto(null);
     };
 
-     // Actualiza la lista de productos cuando se guarda una edición
-     const handleProductoUpdated = (updatedProducto) => {
+    // Actualiza la lista de productos cuando se guarda una edición
+    const handleProductoUpdated = (updatedProducto) => {
         setProductos((prevProductos) =>
             prevProductos.map((prod) =>
                 prod.idProducto === updatedProducto.idProducto ? updatedProducto : prod
@@ -121,7 +117,6 @@ const ListarProductos = ({ agregarAlCarrito, setVistaActual  }) => {
     const handleAgregarAlCarrito = (producto) => {
         agregarAlCarrito(producto);
     };
-
 
     if (loading) return <p>Cargando productos...</p>; // Muestra mientras carga
     if (error) return <p>{error}</p>; // Muestra el error
