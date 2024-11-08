@@ -75,10 +75,10 @@ const ListarProductos = ({ agregarAlCarrito, setVistaActual }) => {
                 );
             }
     
-            // Filtrar por marca
+            // Filtrar por marca usando `idMarca` en lugar de `marca.nombre`
             if (marcaFilter) {
                 tempProductos = tempProductos.filter(producto => 
-                    producto.marca.nombre.toLowerCase() === marcaFilter.nombre.toLowerCase()
+                    producto.idMarca === marcaFilter // Ajusta según el schema que recibas
                 );
             }
     
@@ -164,7 +164,7 @@ const ListarProductos = ({ agregarAlCarrito, setVistaActual }) => {
         const clienteId = e.target.value;
         const cliente = clientes.find(c => c.idCliente.toString() === clienteId);
         setClienteSeleccionado(cliente);
-    };   
+    }; 
     if (loading) return <p>Cargando productos...</p>; // Muestra mientras carga
     if (error) return <p>{error}</p>; // Muestra el error
 

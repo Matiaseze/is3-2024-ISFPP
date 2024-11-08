@@ -19,7 +19,7 @@ const NavbarApp = ({ carrito, setCarrito, vistaActual }) => {
         }));
 
         const pedido = {
-            idCliente: clienteSeleccionado.idCliente,  // Incluir el idCliente
+            idCliente: clienteSeleccionado,  
             montoTotal: carrito.reduce((acc, p) => acc + p.precio * p.cantidad, 0),
             estado: "INICIADO",
             detalles: productosConDetalles,

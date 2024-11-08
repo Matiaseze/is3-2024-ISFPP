@@ -10,4 +10,4 @@ class Categoria(Base):
     descripcion = Column(String, nullable=False)
     baja = Column(Boolean, default=False)
 
-    productos = relationship("Producto", back_populates="marca")
+    productos = relationship("Producto", back_populates="categoria")
