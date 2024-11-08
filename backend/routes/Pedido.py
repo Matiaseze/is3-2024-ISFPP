@@ -7,23 +7,28 @@ from database import get_db
 from typing import List
 
 router = APIRouter()
+   
+
 
 @router.post("/crear_pedido", response_model=PedidoResponse, status_code=201)
 def crear_pedido(pedido: PedidoCreate, db: Session = Depends(get_db)):
     print(pedido)
     
     for detalle in pedido.detalles:
-        producto = db.query(Producto).filter(Producto.idProducto == detalle.producto.idProducto).first()
+        producto = db.query(Producto).filter(Producto.idProducto == detalle.idProducto).first()
         if not producto:
             raise HTTPException(status_code=400, detail="Uno o más productos no existen.")
         if detalle.cantidad > producto.stock:
             raise HTTPException(status_code=400, detail="Stock insuficiente para uno o más productos.")
+        producto = db.query(Producto).filter(Producto.idProducto == detalle.idProducto).first()
+        producto.stock -= detalle.cantidad
+        db.add(producto)
 
     # Creando el pedido
     nuevo_pedido = Pedido(
-        nombreCliente=pedido.nombreCliente,
+        idCliente=pedido.idCliente,
         montoTotal=pedido.montoTotal,
-        cancelado=pedido.cancelado
+        estado=pedido.estado
     )
 
     db.add(nuevo_pedido)
@@ -34,7 +39,7 @@ def crear_pedido(pedido: PedidoCreate, db: Session = Depends(get_db)):
     for detalle in pedido.detalles:
         nuevo_detalle = DetallePedido(
             idPedido=nuevo_pedido.idPedido,
-            idProducto=detalle.producto.idProducto,
+            idProducto=detalle.idProducto,
             precioUnitario=detalle.precioUnitario,
             cantidad=detalle.cantidad,
             subTotal=detalle.subTotal
