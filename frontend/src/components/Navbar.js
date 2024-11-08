@@ -78,7 +78,12 @@ const NavbarApp = ({ carrito, setCarrito, vistaActual }) => {
                         <NavDropdown.Item href="/productos">Catálogo</NavDropdown.Item>
                     </NavDropdown>
                 </Nav>
-<<<<<<< HEAD
+                <Nav className="mx-auto">
+                    <NavDropdown title="Marcas" id="navbarScrollingDropdown">
+                        <NavDropdown.Item href="/marcas/registrar">Registrar nueva Marca</NavDropdown.Item>
+                        <NavDropdown.Item href="/marcas">Catálogo</NavDropdown.Item>
+                    </NavDropdown>
+                </Nav>
                 <Nav className="mx-auto">
                     <NavDropdown title="Pedidos" id="navbarScrollingDropdown">
                         <NavDropdown.Item href="/pedidos">Listado de pedidos</NavDropdown.Item>
@@ -132,14 +137,12 @@ const NavbarApp = ({ carrito, setCarrito, vistaActual }) => {
                         </NavDropdown>
                     )}
                 </Nav>
-=======
                 <Nav className="mx-auto">  {/* Centra el menú en la barra */}
                     <NavDropdown title="Categorias" id="navbarScrollingDropdown">
                         <NavDropdown.Item href="/categorias/registrar">Registrar nueva categoría</NavDropdown.Item>
                         <NavDropdown.Item href="/categorias">Listado de categorías</NavDropdown.Item>
                     </NavDropdown>
                 </Nav>
->>>>>>> 55ed739b90da3e43050c1ea62f117fcbe9648e69
             </Container>
         </Navbar>
     );

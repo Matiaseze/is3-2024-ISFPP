@@ -1,7 +1,12 @@
 from fastapi import FastAPI
 from database import engine, Base
+<<<<<<< HEAD
 from models import Producto, Pedido, Marca, Cliente, Localidad, Pago, Categoria
 from routes import Producto, Pedido, Marca, Cliente, Localidad, Categoria
+=======
+from models import Producto, Marca, Pedido
+from routes import Producto, Marca, Pedido
+>>>>>>> c73451f04716309c5f18727a835f4c892c45d2f5
 from fastapi.middleware.cors import CORSMiddleware
 
 app = FastAPI()
