@@ -1,7 +1,7 @@
 from fastapi import FastAPI
 from database import engine, Base
-from models import Producto, Pedido, Marca, Cliente, Localidad, Pago
-from routes import Producto, Pedido, Marca, Cliente, Localidad
+from models import Producto, Pedido, Marca, Cliente, Localidad, Pago, Categoria
+from routes import Producto, Pedido, Marca, Cliente, Localidad, Categoria
 from fastapi.middleware.cors import CORSMiddleware
 
 app = FastAPI()
@@ -32,7 +32,7 @@ categorias = [
 
 @app.get("/categorias")
 async def get_categorias():
-    return categorias
+    return categorias 
 
 # @app.get("/marcas")
 # async def get_marcas():
@@ -47,3 +47,4 @@ app.include_router(Pedido.router, prefix="/pedidos", tags=["pedidos"])
 app.include_router(Marca.router, prefix="/marcas", tags=["marcas"])
 app.include_router(Cliente.router, prefix="/clientes", tags=["clientes"])
 app.include_router(Localidad.router, prefix="/localidades", tags=["localidades"])
+app.include_router(Categoria.router, prefix="/categorias", tags=["categorias"])
