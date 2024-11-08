@@ -6,10 +6,10 @@ from schemas.Categoria import CategoriaResponse
 class ProductoBase(BaseModel):
     nombre: str
     descripcion: str
-    idMarca: int
     precio: float
     stock: int
-    categoria: int
+    marca: MarcaResponse  # Cambiado para incluir el objeto completo MarcaResponse
+    categoria: CategoriaResponse  # Cambiado para incluir el objeto completo CategoriaResponse
 
 class ProductoCreate(ProductoBase):
     pass
@@ -17,10 +17,10 @@ class ProductoCreate(ProductoBase):
 class ProductoUpdate(BaseModel):
     nombre: str | None = None
     descripcion: str | None = None
-    idMarca: int | None = None
+    marca: MarcaResponse | None = None
     precio: float | None = None
     stock: int | None = None
-    categoria: int | None = None
+    categoria: CategoriaResponse | None = None
     baja: bool | None = None
 
     class Config:
@@ -29,8 +29,6 @@ class ProductoUpdate(BaseModel):
 class ProductoResponse(ProductoBase):
     idProducto: int
     baja: bool
-    marca: MarcaResponse  # Cambiado para incluir el objeto completo MarcaResponse
-    categoria: CategoriaResponse  # Cambiado para incluir el objeto completo CategoriaResponse
 
     class Config:
         orm_mode = True

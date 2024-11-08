@@ -39,7 +39,7 @@ def crear_pedido(pedido: PedidoCreate, db: Session = Depends(get_db)):
     for detalle in pedido.detalles:
         nuevo_detalle = DetallePedido(
             idPedido=nuevo_pedido.idPedido,
-            idProducto=detalle.idProducto,
+            producto=producto,
             precioUnitario=detalle.precioUnitario,
             cantidad=detalle.cantidad,
             subTotal=detalle.subTotal

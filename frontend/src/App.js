@@ -10,6 +10,7 @@ const App = () => {
 
     const [carrito, setCarrito] = useState([]);
     const [vistaActual, setVistaActual] = useState('');
+    const [clienteSeleccionado, setClienteSeleccionado] = useState(null);
     
     const agregarAlCarrito = (producto) => {
         setCarrito((prevCarrito) => [...prevCarrito, producto]);
@@ -17,10 +18,10 @@ const App = () => {
 
     return (
         <Router>
-            <Navbar carrito={carrito} setCarrito={setCarrito} vistaActual={vistaActual} />
+            <Navbar carrito={carrito} setCarrito={setCarrito} vistaActual={vistaActual} clienteSeleccionado={clienteSeleccionado} />
             <Routes>
                 <Route path="/" element={<Home agregarAlCarrito={agregarAlCarrito} />} />
-                <Route path="/productos" element={<ListarProductos agregarAlCarrito={agregarAlCarrito} setVistaActual={setVistaActual} />} />
+                <Route path="/productos" element={<ListarProductos agregarAlCarrito={agregarAlCarrito} clienteSeleccionado={clienteSeleccionado} setClienteSeleccionado={setClienteSeleccionado} setVistaActual={setVistaActual} />} />
                 <Route path="/productos/registrar" element={<AltaProducto setVistaActual={setVistaActual} />} />
                 <Route path="/pedidos" element={<ListarPedidos setVistaActual={setVistaActual} />} />
                 <Route path="/categorias/" element={<ListarCategorias />} />

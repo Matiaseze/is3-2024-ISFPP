@@ -16,7 +16,7 @@ const ProductoModal = ({ show, onHide, producto, onProductoUpdated }) => {
     useEffect(() => {
         if (producto) {
             setEditedProducto({ ...producto });
-            setMarca(producto.marca || ""); // Asigna la marca actual del producto
+            setMarca(producto.marca); // Asigna la marca actual del producto
         }
         const fetchMarcas = async () => {
             try {
@@ -46,12 +46,10 @@ const ProductoModal = ({ show, onHide, producto, onProductoUpdated }) => {
 
     const handleSaveClick = async () => {
         try {
-            // Modificar `editedProducto` según el schema requerido por el backend
             const productoActualizado = {
-                ...editedProducto,
-                idMarca: marca, // Convertimos `marca` en `idMarca` si el schema lo requiere así
+                ...editedProducto
             };
-    
+            console.log(productoActualizado)
             await axios.put(`http://localhost:8000/productos/${producto.idProducto}`, productoActualizado);
             onProductoUpdated(productoActualizado);
             setIsEditing(false);
@@ -122,13 +120,13 @@ const ProductoModal = ({ show, onHide, producto, onProductoUpdated }) => {
                                     onChange={(e) => {
                                         const selectedMarca = e.target.value;
                                         setMarca(selectedMarca);
-                                        setEditedProducto({ ...editedProducto, idMarca: selectedMarca });
+                                        setEditedProducto({ ...editedProducto, marca: selectedMarca });
                                     }}
                                     disabled={!isEditing}
                                 >
                                     {!marca && <option value="">Selecciona una marca</option>}
                                     {marcas.map((marcaItem, index) => (
-                                        <option key={index} value={marcaItem.idMarca}>
+                                        <option key={index} value={marcaItem}>
                                             {marcaItem.nombre}
                                         </option>
                                     ))}

@@ -5,7 +5,7 @@ import { Container, Row, Col, Card, Button, InputGroup, FormControl, Form } from
 import ProductoModal from './ProductoModal';
 import FiltroProductos from './FiltroProductos'; // Importar el componente de filtro
 
-const ListarProductos = ({ agregarAlCarrito, setVistaActual }) => {
+const ListarProductos = ({ agregarAlCarrito, clienteSeleccionado, setClienteSeleccionado, setVistaActual }) => {
     const [loading, setLoading] = useState(true);   // Indicador de carga
     const [error, setError] = useState(null);       // Manejo de errores
     const [productos, setProductos] = useState([]);
@@ -28,7 +28,6 @@ const ListarProductos = ({ agregarAlCarrito, setVistaActual }) => {
     const [cantidadSeleccionada, setCantidadSeleccionada] = useState({});
     // Para menjar los clientes
     const [clientes, setClientes] = useState([]);
-    const [clienteSeleccionado, setClienteSeleccionado] = useState(null);
 
     useEffect(() => {
         setVistaActual('catalogo'); // Actualiza la vista actual a "catalogo"
@@ -41,7 +40,7 @@ const ListarProductos = ({ agregarAlCarrito, setVistaActual }) => {
                 setProductos(response.data); // Actualizar la lista de productos
                 setFilteredProductos(response.data); // Inicialmente muestra todos los productos
                 // Marcas y categorias disponibles
-                const marcas = [...new Set(response.data.map(p => p.idMarca))];
+                const marcas = [...new Set(response.data.map(p => p.marca))];
                 const categorias = [...new Set(response.data.map(p => p.categoria))];
                 setMarcasDisponibles(marcas);
                 setCategoriasDisponibles(categorias);
@@ -75,17 +74,17 @@ const ListarProductos = ({ agregarAlCarrito, setVistaActual }) => {
                 );
             }
     
-            // Filtrar por marca usando `idMarca` en lugar de `marca.nombre`
+            // Filtrar por marca
             if (marcaFilter) {
                 tempProductos = tempProductos.filter(producto => 
-                    producto.idMarca === marcaFilter // Ajusta según el schema que recibas
+                    producto.marca.nombre.toLowerCase().includes(marcaFilter.toLowerCase())
                 );
             }
     
             // Filtrar por categoría
             if (categoriaFilter) {
                 tempProductos = tempProductos.filter(producto => 
-                    producto.categoria.toLowerCase() === categoriaFilter.toLowerCase()
+                    producto.categoria.nombre.toLowerCase().includes(categoriaFilter.toLowerCase())
                 );
             }
     
@@ -138,19 +137,19 @@ const ListarProductos = ({ agregarAlCarrito, setVistaActual }) => {
             alert('Debes seleccionar un cliente antes de agregar productos al carrito.');
             return;
         }
-    
+
         // Agregar producto al carrito con el cliente
         const productoConCliente = {
             ...producto,  // Propiedades del producto
-            idCliente: clienteSeleccionado.idCliente,  // Añadir el id del cliente seleccionado
+            cliente: clienteSeleccionado,  // Añadir el id del cliente seleccionado
             cantidad: cantidadSeleccionada[producto.idProducto] || 1  // Cantidad seleccionada, por defecto 1
         };
-    
+
         // Llamar a la función que agrega al carrito, pasando el producto con cliente
         agregarAlCarrito(productoConCliente);
     };
-     // Maneja el cambio en la cantidad seleccionada para un producto específico
-     const handleCantidadChange = (productoId, nuevaCantidad) => {
+    // Maneja el cambio en la cantidad seleccionada para un producto específico
+    const handleCantidadChange = (productoId, nuevaCantidad) => {
         setCantidadSeleccionada((prevCantidades) => {
             console.log("Actualizando cantidad para producto:", productoId, "a", nuevaCantidad);
             return {
@@ -164,7 +163,7 @@ const ListarProductos = ({ agregarAlCarrito, setVistaActual }) => {
         const clienteId = e.target.value;
         const cliente = clientes.find(c => c.idCliente.toString() === clienteId);
         setClienteSeleccionado(cliente);
-    }; 
+    };
     if (loading) return <p>Cargando productos...</p>; // Muestra mientras carga
     if (error) return <p>{error}</p>; // Muestra el error
 
@@ -209,9 +208,9 @@ const ListarProductos = ({ agregarAlCarrito, setVistaActual }) => {
                         <Card>
                             <Card.Body>
                                 <Card.Title>{producto.nombre}</Card.Title>
-                                <Card.Subtitle className="mb-2 text-muted">{producto.marca}</Card.Subtitle>
+                                <Card.Subtitle className="mb-2 text-muted">{producto.marca.nombre}</Card.Subtitle>
                                 <Card.Text>
-                                    <strong>Categoría:</strong> {producto.categoria} <br />
+                                    <strong>Categoría:</strong> {producto.categoria.nombre} <br />
                                     <strong>Precio:</strong> ${producto.precio} <br />
                                     <strong>Stock:</strong> {producto.stock}
                                 </Card.Text>
@@ -235,11 +234,11 @@ const ListarProductos = ({ agregarAlCarrito, setVistaActual }) => {
                     </Col>
                 ))}
             </Row>
-            <ProductoModal 
-                show={showModal} 
-                onHide={handleCloseModal} 
-                producto={selectedProducto} 
-                onProductoUpdated={handleProductoUpdated} 
+            <ProductoModal
+                show={showModal}
+                onHide={handleCloseModal}
+                producto={selectedProducto}
+                onProductoUpdated={handleProductoUpdated}
             />
         </Container>
     );

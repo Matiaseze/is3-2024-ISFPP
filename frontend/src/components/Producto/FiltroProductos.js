@@ -33,7 +33,7 @@ const FiltroProductos = ({
                         >
                             <option value="">Todas</option>
                             {marcasDisponibles.map(marca => (
-                                <option key={marca} value={marca}>{marca}</option>
+                                <option key={marca.idMarca} value={marca.nombre}>{marca.nombre}</option>
                             ))}
                         </Form.Control>
                     </Form.Group>
@@ -48,7 +48,7 @@ const FiltroProductos = ({
                         >
                             <option value="">Todas</option>
                             {categoriasDisponibles.map(categoria => (
-                                <option key={categoria} value={categoria}>{categoria}</option>
+                                <option key={categoria.idCategoria} value={categoria.nombre}>{categoria.nombre}</option>
                             ))}
                         </Form.Control>
                     </Form.Group>
