@@ -1,7 +1,8 @@
 from fastapi import FastAPI
 from database import engine, Base
-from models import Producto, Pedido, Marca, Cliente, Localidad, Pago
-from routes import Producto, Pedido, Marca, Cliente, Localidad
+from models import Producto, Pedido, Marca, Cliente, Localidad, Pago, Categoria
+from routes import Producto, Pedido, Marca, Cliente, Localidad, Categoria
+
 from fastapi.middleware.cors import CORSMiddleware
 
 app = FastAPI()
@@ -15,29 +16,6 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-# Categorias de ejemplo para probar el formulario de alta producto BORRAR DESPUES
-categorias = [
-    "Electrónica",
-    "Ropa",
-    "Alimentos",
-    "Juguetes"
-]
-# # Marcas de ejemplo para probar el formulario de alta producto BORRAR DESPUES
-# marcas = [
-#     "Motorola",
-#     "Asus",
-#     "LG",
-#     "MSI"
-# ]
-
-@app.get("/categorias")
-async def get_categorias():
-    return categorias
-
-# @app.get("/marcas")
-# async def get_marcas():
-#     return marcas
-
 # Crear tablas
 Base.metadata.create_all(bind=engine)
 
@@ -47,3 +25,4 @@ app.include_router(Pedido.router, prefix="/pedidos", tags=["pedidos"])
 app.include_router(Marca.router, prefix="/marcas", tags=["marcas"])
 app.include_router(Cliente.router, prefix="/clientes", tags=["clientes"])
 app.include_router(Localidad.router, prefix="/localidades", tags=["localidades"])
+app.include_router(Categoria.router, prefix="/categorias", tags=["categorias"])

@@ -6,7 +6,7 @@ class Localidad(Base):
     __tablename__ = "localidades"
 
     idLocalidad = Column(Integer, primary_key=True, index=True)
-    codPostal = Column(Integer, nullable=False, index=True)
+    codPostal = Column(Integer, nullable=False)
     nombre = Column(String, nullable=False)
 
 

@@ -49,8 +49,3 @@ def baja_localidad(codPostal: int, db: Session = Depends(get_db)):
     db_localidad.baja = True
     db.commit()
     return {"detail": "Localidad dada de baja exitosamente"}
-
-@router.get("/", response_model=List[LocalidadResponse])
-def listar_localidades(skip: int = 0, limit: int = 10, db: Session = Depends(get_db)):
-    localidades = db.query(Localidad).offset(skip).limit(limit).all()
-    return localidades

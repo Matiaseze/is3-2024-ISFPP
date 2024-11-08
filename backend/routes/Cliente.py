@@ -69,8 +69,3 @@ def baja_cliente(dni: int, db: Session = Depends(get_db)):
     db_cliente.baja = True
     db.commit()
     return {"detail": "Cliente dado de baja exitosamente"}
-
-@router.get("/", response_model=List[ClienteResponse])
-def listar_clientes(skip: int = 0, limit: int = 10, db: Session = Depends(get_db)):
-    clientes = db.query(Cliente).offset(skip).limit(limit).all()
-    return clientes
