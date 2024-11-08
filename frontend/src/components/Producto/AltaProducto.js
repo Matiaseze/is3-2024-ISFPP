@@ -5,7 +5,7 @@ import axios from 'axios';
 const AltaProducto = () => {
     const [nombre, setNombre] = useState('');
     const [descripcion, setDescripcion] = useState('');
-    const [marca, setMarca] = useState('');
+    const [idMarca, setMarca] = useState('');
     const [marcas, setMarcas] = useState([]);
     const [precio, setPrecio] = useState('');
     const [stock, setStock] = useState('');
@@ -20,13 +20,14 @@ const AltaProducto = () => {
         const nuevoProducto = { 
             nombre, 
             descripcion, 
+            idMarca, 
             precio: parseFloat(precio),
             stock: parseInt(stock), 
-            marca, 
             categoria 
         };
     
         try {
+            console.log(nuevoProducto)
             const response = await axios.post('http://localhost:8000/productos/registrar', nuevoProducto);
             if (response.status === 201) {
                 setSuccess(true);
@@ -103,7 +104,7 @@ const AltaProducto = () => {
                 <Form.Group controlId="formMarca">
                     <Form.Label>Marca</Form.Label>
                     <Form.Select 
-                        value={marca}
+                        value={idMarca}
                         onChange={(e) => setMarca(e.target.value)}
                     >
                         <option value="">Selecciona una marca</option>
