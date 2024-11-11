@@ -143,6 +143,12 @@ const NavbarApp = ({ carrito, setCarrito, vistaActual }) => {
                         <NavDropdown.Item href="/categorias">Listado de categorías</NavDropdown.Item>
                     </NavDropdown>
                 </Nav>
+                <Nav className="mx-auto">  {/* Centra el menú en la barra */}
+                    <NavDropdown title="Localidades" id="navbarScrollingDropdown">
+                        <NavDropdown.Item href="/localidades/registrar">Registrar nueva localidad</NavDropdown.Item>
+                        <NavDropdown.Item href="/localidades">Listado de localidades</NavDropdown.Item>
+                    </NavDropdown>
+                </Nav>
             </Container>
         </Navbar>
     );

@@ -6,6 +6,7 @@ import { ListarProductos, AltaProducto } from './components/Producto';
 import { ListarPedidos } from './components/Pedido';
 import { ListarCategorias, AltaCategoria } from './components/Categoria';
 import { AltaMarca, ListarMarcas } from './components/Marca'
+import { ListarLocalidades, AltaLocalidad } from './components/Localidad';
 
 const App = () => {
 
@@ -31,6 +32,8 @@ const App = () => {
                 <Route path="/categorias/registrar" element={<AltaCategoria />} />
                 <Route path="/marcas/registrar" element={<AltaMarca setVistaActual={setVistaActual} />} />
                 <Route path="/marcas" element={<ListarMarcas agregarAlCarrito={agregarAlCarrito} setVistaActual={setVistaActual} />} />
+                <Route path="/localidades/" element={<ListarLocalidades />} />
+                <Route path="/localidades/registrar" element={<AltaLocalidad />} />
             </Routes>
         </Router>
     );
