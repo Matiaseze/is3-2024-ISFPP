@@ -16,7 +16,7 @@ class Cliente(Base):
     nombre = Column(String, nullable=False)
     apellido = Column(String, nullable=False)
     domicilio = Column(String, nullable=False)
-    idLocalidad = Column(Integer, ForeignKey("localidades.codPostal"))  # Agrega la clave foránea a Localidad
+    idLocalidad = Column(Integer, ForeignKey("localidades.idLocalidad"))  # Agrega la clave foránea a Localidad
     baja = Column(Boolean, default=False)
 
     # Define la relación con Localidad
