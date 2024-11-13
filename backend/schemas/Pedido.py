@@ -9,8 +9,10 @@ from schemas.Cliente import ClienteResponse
 class PedidoBase(BaseModel):
     montoTotal: float
     estado: EstadoPedido
+    cliente: ClienteResponse
 
 class DetallePedidoBase(BaseModel):
+    producto: ProductoResponse
     precioUnitario: float
     cantidad: int
     subTotal: float
@@ -20,17 +22,18 @@ class DetallePedidoCreate(DetallePedidoBase):
 
 class PedidoCreate(PedidoBase):
     detalles: List[DetallePedidoCreate]
-    idCliente: int
+    
 
 class DetallePedidoResponse(DetallePedidoBase):
     id: int
-    producto: ProductoResponse
+
     class Config:
         orm_mode = True
+
 class PedidoResponse(PedidoBase):
     idPedido: int
     fechaPedido: datetime
-    cliente: ClienteResponse  
+ 
     detalles: List[DetallePedidoResponse] 
 
     class Config:

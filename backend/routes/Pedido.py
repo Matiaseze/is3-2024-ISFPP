@@ -7,7 +7,6 @@ from database import get_db
 from typing import List
 
 router = APIRouter()
-   
 
 
 @router.post("/crear_pedido", response_model=PedidoResponse, status_code=201)
@@ -15,18 +14,19 @@ def crear_pedido(pedido: PedidoCreate, db: Session = Depends(get_db)):
     print(pedido)
     
     for detalle in pedido.detalles:
-        producto = db.query(Producto).filter(Producto.idProducto == detalle.idProducto).first()
-        if not producto:
+        producto_en_detalle = db.query(Producto).filter(Producto.idProducto == detalle.producto.idProducto).first()
+        if not producto_en_detalle:
             raise HTTPException(status_code=400, detail="Uno o más productos no existen.")
-        if detalle.cantidad > producto.stock:
+        if detalle.cantidad > producto_en_detalle.stock:
             raise HTTPException(status_code=400, detail="Stock insuficiente para uno o más productos.")
-        producto = db.query(Producto).filter(Producto.idProducto == detalle.idProducto).first()
-        producto.stock -= detalle.cantidad
-        db.add(producto)
+        
+        
+        producto_en_detalle.stock -= detalle.cantidad
+        db.add(producto_en_detalle)
 
     # Creando el pedido
     nuevo_pedido = Pedido(
-        idCliente=pedido.idCliente,
+        idCliente=pedido.cliente.idCliente,
         montoTotal=pedido.montoTotal,
         estado=pedido.estado
     )
@@ -39,7 +39,7 @@ def crear_pedido(pedido: PedidoCreate, db: Session = Depends(get_db)):
     for detalle in pedido.detalles:
         nuevo_detalle = DetallePedido(
             idPedido=nuevo_pedido.idPedido,
-            producto=producto,
+            producto=producto_en_detalle,
             precioUnitario=detalle.precioUnitario,
             cantidad=detalle.cantidad,
             subTotal=detalle.subTotal
@@ -60,7 +60,16 @@ def cancelar_pedido(idPedido: int, db: Session = Depends(get_db)):
     db_pedido = db.query(Pedido).filter(Pedido.idPedido == idPedido).first()
     if not db_pedido:
         raise HTTPException(status_code=404, detail="El pedido no existe.")
-    db_pedido.cancelado = True
+    db_pedido.estado = 'CANCELADO'
+    db.commit()
+    return db_pedido
+
+@router.delete("/{idPedido}/iniciar", response_model=PedidoResponse, status_code=200)
+def inciar_pedido(idPedido: int, db: Session = Depends(get_db)):
+    db_pedido = db.query(Pedido).filter(Pedido.idPedido == idPedido).first()
+    if not db_pedido:
+        raise HTTPException(status_code=404, detail="El pedido no existe.")
+    db_pedido.estado = 'INICIADO'
     db.commit()
     return db_pedido
 
@@ -68,3 +77,4 @@ def cancelar_pedido(idPedido: int, db: Session = Depends(get_db)):
 def listar_detalles_de_pedido(idPedido: int, db: Session = Depends(get_db)):
     detalles_pedido = db.query(DetallePedido).filter(DetallePedido.idPedido == idPedido).all() 
     return detalles_pedido
+

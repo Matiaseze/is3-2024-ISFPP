@@ -17,6 +17,7 @@ const ListarPedidos = () => {
             setLoading(true);
             try {
                 const response = await axios.get('http://localhost:8000/pedidos'); // Ajusta la URL según sea necesario
+                console.log(response.data)
                 setPedidos(response.data);
                 setPedidosFiltrados(response.data);
                 setLoading(false);
@@ -56,7 +57,7 @@ const ListarPedidos = () => {
             filtered = filtered.filter(pedido => pedido.nombreCliente.toLowerCase().includes(filters.cliente.toLowerCase()));
         }
         if (filters.estado !== '') {
-            filtered = filtered.filter(pedido => pedido.cancelado.toString() === filters.estado);
+            filtered = filtered.filter(pedido => pedido.estado.toString() === filters.estado);
         }
         if (filters.montoMin) {
             filtered = filtered.filter(pedido => pedido.montoTotal >= parseFloat(filters.montoMin));
@@ -108,9 +109,9 @@ const ListarPedidos = () => {
                     {pedidosFiltrados.map((pedido) => (
                         <tr key={pedido.idPedido}>
                             <td>{pedido.idPedido}</td>
-                            <td>{pedido.nombreCliente}</td>
+                            <td>{pedido.cliente.nombre} {pedido.cliente.apellido}</td>
                             <td>{new Date(pedido.fechaPedido).toLocaleDateString('es-ES', { year: 'numeric', month: '2-digit', day: '2-digit' })}</td>
-                            <td>{pedido.cancelado ? 'Sí' : 'No'}</td>
+                            <td>{pedido.estado}</td>
                             <td>{pedido.montoTotal}</td>
                             <td>
                                 <Button variant="info" onClick={() => handleShowModal(pedido.idPedido)}>Detalles</Button>
@@ -121,7 +122,7 @@ const ListarPedidos = () => {
                                             cancelarPedido(pedido.idPedido);
                                         }
                                     }}
-                                    disabled={pedido.cancelado === true}
+                                    disabled={pedido.estado === 'CANCELADO'}
                                 >
                                     Cancelar
                                 </Button>
