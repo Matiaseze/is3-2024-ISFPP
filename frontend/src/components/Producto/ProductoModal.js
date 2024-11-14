@@ -47,7 +47,9 @@ const ProductoModal = ({ show, onHide, producto, onProductoUpdated }) => {
     const handleSaveClick = async () => {
         try {
             const productoActualizado = {
-                ...editedProducto
+                ...editedProducto,
+                marca: marcas.find((m) => m.idMarca === marca.idMarca),
+                categoria: editedProducto.categoria
             };
             console.log(productoActualizado)
             await axios.put(`http://localhost:8000/productos/${producto.idProducto}`, productoActualizado);
@@ -116,21 +118,21 @@ const ProductoModal = ({ show, onHide, producto, onProductoUpdated }) => {
                                 <Form.Group controlId="marca">
                                     <Form.Label>Marca</Form.Label>
                                     <Form.Select
-                                    value={marca || ""}
-                                    onChange={(e) => {
-                                        const selectedMarca = e.target.value;
-                                        setMarca(selectedMarca);
-                                        setEditedProducto({ ...editedProducto, marca: selectedMarca });
-                                    }}
-                                    disabled={!isEditing}
-                                >
-                                    {!marca && <option value="">Selecciona una marca</option>}
-                                    {marcas.map((marcaItem, index) => (
-                                        <option key={index} value={marcaItem}>
-                                            {marcaItem.nombre}
-                                        </option>
-                                    ))}
-                                </Form.Select>
+                                        value={marca?.idMarca || ""}  // Asegura que el valor sea el id de la marca actual o una cadena vacía
+                                        onChange={(e) => {
+                                            const selectedMarca = marcas.find(m => m.idMarca === parseInt(e.target.value));
+                                            setMarca(selectedMarca);  // Actualiza el estado `marca`
+                                            setEditedProducto({ ...editedProducto, marca: selectedMarca });  // Actualiza `editedProducto` con el objeto de la nueva marca
+                                        }}
+                                        disabled={!isEditing}
+                                    >
+                                        <option value="">Selecciona una marca</option>
+                                        {marcas.map((marcaItem, index) => (
+                                            <option key={`${marcaItem.idMarca}-${index}`} value={marcaItem.idMarca}>
+                                                {marcaItem.nombre}
+                                            </option>
+                                        ))}
+                                    </Form.Select>
                                 </Form.Group>
                                 <Form.Group controlId="precio">
                                     <Form.Label>Precio</Form.Label>

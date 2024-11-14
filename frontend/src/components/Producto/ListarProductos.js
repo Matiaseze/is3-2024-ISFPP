@@ -66,49 +66,52 @@ const ListarProductos = ({ agregarAlCarrito, clienteSeleccionado, setClienteSele
     useEffect(() => {
         const filterProductos = () => {
             let tempProductos = [...productos];
-    
+        
             // Filtrar por nombre
             if (nombreFilter) {
                 tempProductos = tempProductos.filter(producto => 
                     producto.nombre.toLowerCase().includes(nombreFilter.toLowerCase())
                 );
             }
-    
-            // Filtrar por marca
+        
+            // Filtrar por marca solo si marcaFilter no está vacío
             if (marcaFilter) {
                 tempProductos = tempProductos.filter(producto => 
-                    producto.marca.nombre.toLowerCase().includes(marcaFilter.toLowerCase())
+                    producto.marca.nombre.toLowerCase() === marcaFilter.toLowerCase()
                 );
             }
     
-            // Filtrar por categoría
+            // Filtrar por categoría solo si categoriaFilter no está vacío
             if (categoriaFilter) {
                 tempProductos = tempProductos.filter(producto => 
-                    producto.categoria.nombre.toLowerCase().includes(categoriaFilter.toLowerCase())
+                    producto.categoria.nombre.toLowerCase() === categoriaFilter.toLowerCase()
                 );
             }
-    
+        
             // Filtrar por rango de precio
             if (precioMin) {
                 tempProductos = tempProductos.filter(producto => 
-                    producto.precio >= precioMin
+                    producto.precio >= parseFloat(precioMin)
+                );
+            }
+        
+            if (precioMax) {
+                tempProductos = tempProductos.filter(producto => 
+                    producto.precio <= parseFloat(precioMax)
                 );
             }
     
-            if (precioMax) {
-                tempProductos = tempProductos.filter(producto => 
-                    producto.precio <= precioMax
-                );
-            }
+            // Ordenar productos por nombre
+            tempProductos.sort((a, b) => a.nombre.localeCompare(b.nombre));
     
             setFilteredProductos(tempProductos);
         };
-    
+        
         // Solo aplicar el filtro si los filtros han cambiado
         if (nombreFilter || marcaFilter || categoriaFilter || precioMin || precioMax) {
             filterProductos();
         }
-    
+        
     }, [nombreFilter, marcaFilter, categoriaFilter, precioMin, precioMax, productos]);
 
     const handleShowModal = (producto) => {
@@ -180,8 +183,8 @@ const ListarProductos = ({ agregarAlCarrito, clienteSeleccionado, setClienteSele
                     onChange={handleClienteChange}
                 >
                     <option value="">Elige un cliente</option>
-                    {clientes.map(cliente => (
-                        <option key={cliente.idCliente} value={cliente.idCliente}>
+                    {clientes.map((cliente, index) => (
+                        <option key={`${cliente.idCliente}-${index}`} value={cliente.idCliente}>
                             {cliente.nombre} {cliente.apellido}
                         </option>
                     ))}
@@ -220,7 +223,14 @@ const ListarProductos = ({ agregarAlCarrito, clienteSeleccionado, setClienteSele
                                         min="1"
                                         max={producto.stock}
                                         value={cantidadSeleccionada[producto.idProducto] || 1}
-                                        onChange={(e) => handleCantidadChange(producto.idProducto, parseInt(e.target.value) || 1)}
+                                        onChange={(e) => {
+                                            let newValue = parseInt(e.target.value) || 1; // Asegúrate de que el valor no sea NaN
+                                            // Si el nuevo valor es mayor al stock, establecemos el valor al stock
+                                            if (newValue > producto.stock) {
+                                                newValue = producto.stock;
+                                            }
+                                            handleCantidadChange(producto.idProducto, newValue);
+                                        }}
                                     />
                                 </InputGroup>
                                 <Button variant="primary" onClick={() => handleAgregarAlCarrito(producto)}>

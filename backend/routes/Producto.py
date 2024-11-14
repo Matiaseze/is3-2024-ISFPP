@@ -58,6 +58,7 @@ def crear_producto(producto: ProductoCreate, db: Session = Depends(get_db)):
 
 @router.put("/{idProducto}", response_model=ProductoResponse)
 def modificar_producto(idProducto: int, producto: ProductoUpdate, db: Session = Depends(get_db)):
+    
     db_producto = db.query(Producto).filter(Producto.idProducto == idProducto).first()
     if not db_producto:
         raise HTTPException(status_code=404, detail="El producto no existe.")
@@ -74,7 +75,7 @@ def modificar_producto(idProducto: int, producto: ProductoUpdate, db: Session = 
     if not categoria:
         raise HTTPException(status_code=400, detail="Marca no encontrada.")
 
-
+    
     db_producto.nombre=producto.nombre
     db_producto.descripcion=producto.descripcion
     db_producto.precio=producto.precio
