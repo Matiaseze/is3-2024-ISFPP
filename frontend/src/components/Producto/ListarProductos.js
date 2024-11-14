@@ -66,52 +66,49 @@ const ListarProductos = ({ agregarAlCarrito, clienteSeleccionado, setClienteSele
     useEffect(() => {
         const filterProductos = () => {
             let tempProductos = [...productos];
-        
-            // Filtrar por nombre
+
             if (nombreFilter) {
-                tempProductos = tempProductos.filter(producto => 
+                tempProductos = tempProductos.filter(producto =>
                     producto.nombre.toLowerCase().includes(nombreFilter.toLowerCase())
                 );
             }
-        
+
             // Filtrar por marca solo si marcaFilter no está vacío
             if (marcaFilter) {
-                tempProductos = tempProductos.filter(producto => 
+                tempProductos = tempProductos.filter(producto =>
                     producto.marca.nombre.toLowerCase() === marcaFilter.toLowerCase()
                 );
             }
-    
+
             // Filtrar por categoría solo si categoriaFilter no está vacío
             if (categoriaFilter) {
-                tempProductos = tempProductos.filter(producto => 
+                tempProductos = tempProductos.filter(producto =>
                     producto.categoria.nombre.toLowerCase() === categoriaFilter.toLowerCase()
                 );
             }
-        
+
             // Filtrar por rango de precio
             if (precioMin) {
-                tempProductos = tempProductos.filter(producto => 
+                tempProductos = tempProductos.filter(producto =>
                     producto.precio >= parseFloat(precioMin)
                 );
             }
-        
+
             if (precioMax) {
-                tempProductos = tempProductos.filter(producto => 
+                tempProductos = tempProductos.filter(producto =>
                     producto.precio <= parseFloat(precioMax)
                 );
             }
-    
+
             // Ordenar productos por nombre
             tempProductos.sort((a, b) => a.nombre.localeCompare(b.nombre));
-    
+
             setFilteredProductos(tempProductos);
         };
-        
-        // Solo aplicar el filtro si los filtros han cambiado
-        if (nombreFilter || marcaFilter || categoriaFilter || precioMin || precioMax) {
-            filterProductos();
-        }
-        
+
+
+        filterProductos();
+
     }, [nombreFilter, marcaFilter, categoriaFilter, precioMin, precioMax, productos]);
 
     const handleShowModal = (producto) => {
@@ -191,59 +188,73 @@ const ListarProductos = ({ agregarAlCarrito, clienteSeleccionado, setClienteSele
                 </Form.Control>
             </Form.Group>
             {/* Usar el componente de filtro */}
-            <FiltroProductos 
-                nombreFilter={nombreFilter} 
+            <FiltroProductos
+                nombreFilter={nombreFilter}
                 setNombreFilter={setNombreFilter}
-                marcaFilter={marcaFilter} 
+                marcaFilter={marcaFilter}
                 setMarcaFilter={setMarcaFilter}
-                categoriaFilter={categoriaFilter} 
+                categoriaFilter={categoriaFilter}
                 setCategoriaFilter={setCategoriaFilter}
-                precioMin={precioMin} 
+                precioMin={precioMin}
                 setPrecioMin={setPrecioMin}
-                precioMax={precioMax} 
+                precioMax={precioMax}
                 setPrecioMax={setPrecioMax}
                 marcasDisponibles={marcasDisponibles}
                 categoriasDisponibles={categoriasDisponibles}
             />
             <Row>
-                {filteredProductos.map((producto) => (
-                    <Col key={producto.idProducto} sm={12} md={6} lg={4} className="mb-4">
-                        <Card>
-                            <Card.Body>
-                                <Card.Title>{producto.nombre}</Card.Title>
-                                <Card.Subtitle className="mb-2 text-muted">{producto.marca.nombre}</Card.Subtitle>
-                                <Card.Text>
-                                    <strong>Categoría:</strong> {producto.categoria.nombre} <br />
-                                    <strong>Precio:</strong> ${producto.precio} <br />
-                                    <strong>Stock:</strong> {producto.stock}
-                                </Card.Text>
-                                <InputGroup className="mb-3">
-                                    <FormControl
-                                        type="number"
-                                        min="1"
-                                        max={producto.stock}
-                                        value={cantidadSeleccionada[producto.idProducto] || 1}
-                                        onChange={(e) => {
-                                            let newValue = parseInt(e.target.value) || 1; // Asegúrate de que el valor no sea NaN
-                                            // Si el nuevo valor es mayor al stock, establecemos el valor al stock
-                                            if (newValue > producto.stock) {
-                                                newValue = producto.stock;
-                                            }
-                                            handleCantidadChange(producto.idProducto, newValue);
-                                        }}
-                                    />
-                                </InputGroup>
-                                <Button variant="primary" onClick={() => handleAgregarAlCarrito(producto)}>
-                                    Agregar al Carrito
-                                </Button>
-                                <Button variant="info" onClick={() => handleShowModal(producto)}>
-                                    Ver Detalles
-                                </Button>
-                            </Card.Body>
-                        </Card>
-                    </Col>
-                ))}
-            </Row>
+    {filteredProductos.map((producto) => (
+        <Col key={producto.idProducto} sm={12} md={6} lg={4} className="mb-4">
+            <Card
+                style={{
+                    opacity: producto.baja ? 0.5 : 1,  // Aplica transparencia si baja es true
+                    pointerEvents: producto.baja ? 'none' : 'auto'  // Deshabilita interacciones si baja es true
+                }}
+            >
+                <Card.Body>
+                    <Card.Title>{producto.nombre}</Card.Title>
+                    <Card.Subtitle className="mb-2 text-muted">{producto.marca.nombre}</Card.Subtitle>
+                    <Card.Text>
+                        <strong>Categoría:</strong> {producto.categoria.nombre} <br />
+                        <strong>Precio:</strong> ${producto.precio} <br />
+                        <strong>Stock:</strong> {producto.stock}
+                    </Card.Text>
+                    <InputGroup className="mb-3">
+                        <FormControl
+                            type="number"
+                            min="1"
+                            max={producto.stock}
+                            value={cantidadSeleccionada[producto.idProducto] || 1}
+                            onChange={(e) => {
+                                let newValue = parseInt(e.target.value) || 1;
+                                if (newValue > producto.stock) {
+                                    newValue = producto.stock;
+                                }
+                                handleCantidadChange(producto.idProducto, newValue);
+                            }}
+                            disabled={producto.baja}  // Deshabilita el input si baja es true
+                        />
+                    </InputGroup>
+                    <Button
+                        variant="primary"
+                        onClick={() => handleAgregarAlCarrito(producto)}
+                        disabled={producto.baja}  // Deshabilita el botón si baja es true
+                    >
+                        Agregar al Carrito
+                    </Button>
+                    <Button
+                        variant="info"
+                        onClick={() => handleShowModal(producto)}
+                        disabled={producto.baja}  // Deshabilita el botón si baja es true
+                    >
+                        Ver Detalles
+                    </Button>
+                </Card.Body>
+            </Card>
+        </Col>
+    ))}
+</Row>
+
             <ProductoModal
                 show={showModal}
                 onHide={handleCloseModal}
