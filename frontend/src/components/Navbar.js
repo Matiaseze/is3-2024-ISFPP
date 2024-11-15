@@ -73,6 +73,12 @@ const NavbarApp = ({ carrito, setCarrito, vistaActual }) => {
             <Container>
                 <Navbar.Brand href="/">Home</Navbar.Brand>
                 <Nav className="mx-auto">
+                    <NavDropdown title="Clientes" id="navbarScrollingDropdown">
+                        <NavDropdown.Item href="/clientes/registrar">Registrar nuevo Cliente</NavDropdown.Item>
+                        <NavDropdown.Item href="/clientes">Catálogo</NavDropdown.Item>
+                    </NavDropdown>
+                </Nav>
+                <Nav className="mx-auto">
                     <NavDropdown title="Productos" id="navbarScrollingDropdown">
                         <NavDropdown.Item href="/productos/registrar">Registrar nuevo Producto</NavDropdown.Item>
                         <NavDropdown.Item href="/productos">Catálogo</NavDropdown.Item>
