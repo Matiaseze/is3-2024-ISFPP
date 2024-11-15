@@ -10,9 +10,10 @@ class Producto(Base):
     descripcion = Column(String, nullable=False)
     precio = Column(Float, nullable=False)
     stock = Column(Integer, nullable=False)
-    categoria = Column(String, nullable=False)
     baja = Column(Boolean, default=False)
 
+    idCategoria = Column(Integer, ForeignKey("categorias.idCategoria"), nullable=False)
+    categoria = relationship("Categoria", back_populates="productos")
     idMarca = Column(Integer, ForeignKey("marcas.idMarca"), nullable=False)
     marca = relationship("Marca", back_populates="productos")
 

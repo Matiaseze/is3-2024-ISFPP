@@ -24,6 +24,3 @@ class Cliente(Base):
     pagos = relationship("Pago", back_populates="cliente")
     # Relacion con pedido
     pedidos = relationship("Pedido", back_populates="cliente")
-
-    
-

@@ -16,7 +16,7 @@ const ProductoModal = ({ show, onHide, producto, onProductoUpdated }) => {
     useEffect(() => {
         if (producto) {
             setEditedProducto({ ...producto });
-            setMarca(producto.marca || ""); // Asigna la marca actual del producto
+            setMarca(producto.marca); // Asigna la marca actual del producto
         }
         const fetchMarcas = async () => {
             try {
@@ -46,8 +46,14 @@ const ProductoModal = ({ show, onHide, producto, onProductoUpdated }) => {
 
     const handleSaveClick = async () => {
         try {
-            await axios.put(`http://localhost:8000/productos/${producto.idProducto}`, editedProducto);
-            onProductoUpdated(editedProducto);
+            const productoActualizado = {
+                ...editedProducto,
+                marca: marcas.find((m) => m.idMarca === marca.idMarca),
+                categoria: editedProducto.categoria
+            };
+            console.log(productoActualizado)
+            await axios.put(`http://localhost:8000/productos/${producto.idProducto}`, productoActualizado);
+            onProductoUpdated(productoActualizado);
             setIsEditing(false);
             onHide();
         } catch (error) {
@@ -112,18 +118,17 @@ const ProductoModal = ({ show, onHide, producto, onProductoUpdated }) => {
                                 <Form.Group controlId="marca">
                                     <Form.Label>Marca</Form.Label>
                                     <Form.Select
-                                        value={marca || ""}
+                                        value={marca?.idMarca || ""}  // Asegura que el valor sea el id de la marca actual o una cadena vacía
                                         onChange={(e) => {
-                                            const selectedMarca = e.target.value;
-                                            setMarca(selectedMarca);
-                                            setEditedProducto({ ...editedProducto, marca: selectedMarca });
+                                            const selectedMarca = marcas.find(m => m.idMarca === parseInt(e.target.value));
+                                            setMarca(selectedMarca);  // Actualiza el estado `marca`
+                                            setEditedProducto({ ...editedProducto, marca: selectedMarca });  // Actualiza `editedProducto` con el objeto de la nueva marca
                                         }}
-                                        disabled={!isEditing} // Deshabilitar cuando no esté en modo edición
+                                        disabled={!isEditing}
                                     >
-                                        {/* Solo muestra la opción de "Selecciona una marca" si no hay ninguna seleccionada */}
-                                        {!marca && <option value="">Selecciona una marca</option>}
+                                        <option value="">Selecciona una marca</option>
                                         {marcas.map((marcaItem, index) => (
-                                            <option key={index} value={marcaItem.idMarca}>
+                                            <option key={`${marcaItem.idMarca}-${index}`} value={marcaItem.idMarca}>
                                                 {marcaItem.nombre}
                                             </option>
                                         ))}

@@ -13,20 +13,36 @@ const AltaProducto = () => {
     const [categorias, setCategorias] = useState([]);
     const [error, setError] = useState(null);
     const [success, setSuccess] = useState(false);
-    
+
     const handleSubmit = async (e) => {
         e.preventDefault();
-        // La base requiere SI O SI que le manden el tipo de dato correcto!
-        const nuevoProducto = { 
-            nombre, 
-            descripcion, 
-            precio: parseFloat(precio),
-            stock: parseInt(stock), 
-            marca, 
-            categoria 
+
+        // Crea el objeto completo para marca y categoría
+        const marcaCompleta = {
+            nombre: marca.nombre, // Ajusta según el valor de marca
+            descripcion: marca.descripcion,
+            idMarca: marca.idMarca,
+            baja: marca.baja || false
         };
-    
+
+        const categoriaCompleta = {
+            nombre: categoria.nombre,
+            descripcion: categoria.descripcion,
+            idCategoria: categoria.idCategoria,
+            baja: categoria.baja || false
+        };
+
+        // Crea nuevoProducto asegurando el formato correcto
+        const nuevoProducto = {
+            nombre,
+            descripcion,
+            precio: parseFloat(precio),
+            stock: parseInt(stock),
+            marca: marcaCompleta,
+            categoria: categoriaCompleta
+        };
         try {
+            console.log(nuevoProducto)
             const response = await axios.post('http://localhost:8000/productos/registrar', nuevoProducto);
             if (response.status === 201) {
                 setSuccess(true);
@@ -44,10 +60,12 @@ const AltaProducto = () => {
                 alert("¡El producto se añadió con éxito!")
             }
         } catch (err) {
-            //logs por si algo falla
-            alert(error)
-            console.error("Error de solicitud:", err.response);
-            setError(err.response.data.detail || "Error desconocido");
+            console.error("Error de solicitud:", err);
+            if (err.response) {
+                setError(err.response.data.detail || "Error desconocido en el servidor");
+            } else {
+                setError("No se pudo conectar al servidor.");
+            }
             setSuccess(false);
         }
     };
@@ -68,7 +86,7 @@ const AltaProducto = () => {
             } catch (err) {
                 setError(err.message);
             }
-        }; 
+        };
         fetchMarcas();
         fetchCategorias();
     }, []);
@@ -79,71 +97,84 @@ const AltaProducto = () => {
             <Form onSubmit={handleSubmit}>
                 <Form.Group controlId="formNombre">
                     <Form.Label>Nombre</Form.Label>
-                    <Form.Control 
-                        type="text" 
-                        placeholder="Ingrese el nombre del producto" 
-                        value={nombre} 
-                        onChange={(e) => setNombre(e.target.value)} 
-                        required 
+                    <Form.Control
+                        type="text"
+                        placeholder="Ingrese el nombre del producto"
+                        value={nombre}
+                        onChange={(e) => setNombre(e.target.value)}
+                        required
                     />
                 </Form.Group>
 
                 <Form.Group controlId="formDescripcion" className="mt-3">
                     <Form.Label>Descripción</Form.Label>
-                    <Form.Control 
-                        as="textarea" 
-                        rows={3} 
-                        placeholder="Ingrese la descripción del producto" 
-                        value={descripcion} 
-                        onChange={(e) => setDescripcion(e.target.value)} 
-                        required 
+                    <Form.Control
+                        as="textarea"
+                        rows={3}
+                        placeholder="Ingrese la descripción del producto"
+                        value={descripcion}
+                        onChange={(e) => setDescripcion(e.target.value)}
+                        required
                     />
                 </Form.Group>
 
                 <Form.Group controlId="formMarca">
                     <Form.Label>Marca</Form.Label>
-                    <Form.Select 
-                        value={marca}
-                        onChange={(e) => setMarca(e.target.value)}
+                    <Form.Select
+                        value={marca?.idMarca || ""}
+                        onChange={(e) => {
+                            const selectedMarca = marcas.find(marcaItem => marcaItem.idMarca === parseInt(e.target.value));
+                            setMarca(selectedMarca);
+                        }}
                     >
                         <option value="">Selecciona una marca</option>
-                        {marcas.map((cat, index) => (
-                            <option key={index} value={cat.idMarca}>{cat.nombre}</option>
+                        {marcas.map((marcaItem) => (
+                            <option key={marcaItem.idMarca} value={marcaItem.idMarca}>{marcaItem.nombre}</option>
                         ))}
                     </Form.Select>
                 </Form.Group>
 
                 <Form.Group controlId="formPrecio" className="mt-3">
                     <Form.Label>Precio</Form.Label>
-                    <Form.Control 
-                        type="number" 
-                        placeholder="Ingrese el precio del producto" 
-                        value={precio} 
-                        onChange={(e) => setPrecio(e.target.value)} 
-                        required 
+                    <Form.Control
+                        type="number"
+                        placeholder="Ingrese el precio del producto"
+                        value={precio}
+                        onChange={(e) => {
+                            const value = parseFloat(e.target.value);
+                            setPrecio(value >= 0 ? value : 0);
+                        }}
+                        required
+                        min="0"
                     />
                 </Form.Group>
 
                 <Form.Group controlId="formStock" className="mt-3">
                     <Form.Label>Stock</Form.Label>
-                    <Form.Control 
-                        type="number" 
-                        placeholder="Ingrese la cantidad en stock" 
-                        value={stock} 
-                        onChange={(e) => setStock(e.target.value)} 
-                        required 
+                    <Form.Control
+                        type="number"
+                        placeholder="Ingrese la cantidad en stock"
+                        value={stock}
+                        onChange={(e) => {
+                            const value = parseInt(e.target.value, 10);
+                            setStock(value >= 0 ? value : 0);  // Permite solo valores mayores o iguales a 0
+                        }}
+                        required
+                        min="0" // Esto previene valores negativos en navegadores que lo soportan
                     />
                 </Form.Group>
-
                 <Form.Group controlId="formCategoria">
                     <Form.Label>Categoría</Form.Label>
-                    <Form.Select 
-                        value={categoria}
-                        onChange={(e) => setCategoria(e.target.value)}
+                    <Form.Select
+                        value={categoria?.idCategoria || ""}
+                        onChange={(e) => {
+                            const selectedCategoria = categorias.find(categoriaItem => categoriaItem.idCategoria === parseInt(e.target.value));
+                            setCategoria(selectedCategoria);
+                        }}
                     >
                         <option value="">Selecciona una categoría</option>
-                        {categorias.map((cat, index) => (
-                            <option key={index} value={cat}>{cat}</option>
+                        {categorias.map((categoriaItem) => (
+                            <option key={categoriaItem.idCategoria} value={categoriaItem.idCategoria}>{categoriaItem.nombre}</option>
                         ))}
                     </Form.Select>
                 </Form.Group>

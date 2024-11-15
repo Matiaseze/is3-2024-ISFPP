@@ -15,29 +15,6 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-# Categorias de ejemplo para probar el formulario de alta producto BORRAR DESPUES
-categorias = [
-    "Electrónica",
-    "Ropa",
-    "Alimentos",
-    "Juguetes"
-]
-# # Marcas de ejemplo para probar el formulario de alta producto BORRAR DESPUES
-# marcas = [
-#     "Motorola",
-#     "Asus",
-#     "LG",
-#     "MSI"
-# ]
-
-@app.get("/categorias")
-async def get_categorias():
-    return categorias 
-
-# @app.get("/marcas")
-# async def get_marcas():
-#     return marcas
-
 # Crear tablas
 Base.metadata.create_all(bind=engine)
 

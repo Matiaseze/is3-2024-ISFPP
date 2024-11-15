@@ -32,8 +32,12 @@ const FiltroProductos = ({
                             onChange={e => setMarcaFilter(e.target.value)} 
                         >
                             <option value="">Todas</option>
-                            {marcasDisponibles.map(marca => (
-                                <option key={marca} value={marca}>{marca}</option>
+                            {[
+                                ...new Set(marcasDisponibles.map(marca => marca.nombre))
+                            ].map((marca, index) => (
+                                <option key={`${marca.idMarca}-${index}`} value={marca}>
+                                    {marca}
+                                </option>
                             ))}
                         </Form.Control>
                     </Form.Group>
@@ -47,8 +51,12 @@ const FiltroProductos = ({
                             onChange={e => setCategoriaFilter(e.target.value)} 
                         >
                             <option value="">Todas</option>
-                            {categoriasDisponibles.map(categoria => (
-                                <option key={categoria} value={categoria}>{categoria}</option>
+                            {[
+                                ...new Set(categoriasDisponibles.map(categoria => categoria.nombre))
+                            ].map((categoria, index) => (
+                                <option key={`${categoria}-${index}`} value={categoria}>
+                                    {categoria}
+                                </option>
                             ))}
                         </Form.Control>
                     </Form.Group>
