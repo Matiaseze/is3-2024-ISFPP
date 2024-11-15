@@ -37,8 +37,8 @@ const ListarLocalidades = () => {
 
     const handleLocalidadUpdated = (updatedLocalidad) => {
         setLocalidades((prevLocalidades) =>
-            prevLocalidades.map((cat) =>
-                cat.idLocalidad === updatedLocalidad.idLocalidad ? updatedLocalidad : cat
+            prevLocalidades.map((loc) =>
+                loc.idLocalidad === updatedLocalidad.idLocalidad ? updatedLocalidad : loc
             )
         );
         setShowModal(false);
@@ -48,7 +48,7 @@ const ListarLocalidades = () => {
         try {
             await axios.delete(`http://localhost:8000/localidades/${idLocalidad}`);
             setLocalidades((prevLocalidades) =>
-                prevLocalidades.filter((cat) => cat.idLocalidad !== idLocalidad)
+                prevLocalidades.filter((loc) => loc.idLocalidad !== idLocalidad)
             );
             setDeleteMessage("La localidad ha sido eliminada exitosamente.");  // Mensaje de confirmación
             setTimeout(() => setDeleteMessage(null), 3000);  // Oculta el mensaje después de 3 segundos
