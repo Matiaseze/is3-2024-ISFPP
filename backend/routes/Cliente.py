@@ -15,18 +15,13 @@ def get_cliente(idCliente: int, db: Session = Depends(get_db)):
         raise HTTPException(status_code=404, detail="EL cliente no existe.")
     return cliente
 
-@router.get("/", response_model=List[ClienteResponse])
-def listar_clientes(db: Session = Depends(get_db)):
-    clientes = db.query(Cliente).all() 
-    return clientes
-
 @router.post("/registrar", response_model=ClienteResponse, status_code=201)
 def crear_cliente(cliente: ClienteCreate, db: Session = Depends(get_db)):
     db_cliente = db.query(Cliente).filter(Cliente.dni == cliente.dni).first()
     if db_cliente:
         raise HTTPException(status_code=400, detail="El cliente ya existe.")
     
-    localidad_objeto = db.query(Localidad).filter(Localidad.codPostal == cliente.localidad.codPostal).first()
+    localidad_objeto = db.query(Localidad).filter(Localidad.idLocalidad == cliente.localidad.idLocalidad).first()
     if not localidad_objeto:
         # Crear localidad si no existe
         localidad_objeto = Localidad(
@@ -50,9 +45,9 @@ def crear_cliente(cliente: ClienteCreate, db: Session = Depends(get_db)):
     db.refresh(nuevo_cliente)
     return nuevo_cliente
 
-@router.put("/{dni}", response_model=ClienteResponse)
-def modificar_cliente(dni: int, cliente: ClienteUpdate, db: Session = Depends(get_db)):
-    db_cliente = db.query(Localidad).filter(Localidad.codPostal == codPostal).first()
+@router.put("/{idCliente}", response_model=ClienteResponse)
+def modificar_cliente(idCliente: int, cliente: ClienteUpdate, db: Session = Depends(get_db)):
+    db_cliente = db.query(Cliente).filter(Localidad.idCliente == idCliente).first()
     if not db_cliente:
         raise HTTPException(status_code=404, detail="El cliente no existe.")
     for key, value in cliente.dict().items():
@@ -61,9 +56,9 @@ def modificar_cliente(dni: int, cliente: ClienteUpdate, db: Session = Depends(ge
     db.refresh(db_cliente)
     return db_cliente
 
-@router.delete("/{dni}")
-def baja_cliente(dni: int, db: Session = Depends(get_db)):
-    db_cliente = db.query(Cliente).filter(Cliente.dni == dni).first()
+@router.delete("/{idCliente}")
+def baja_cliente(idCliente: int, db: Session = Depends(get_db)):
+    db_cliente = db.query(Cliente).filter(Cliente.idCliente == idCliente).first()
     if not db_cliente:
         raise HTTPException(status_code=404, detail="El cliente no existe.")
     db_cliente.baja = True
