@@ -202,7 +202,7 @@ const ListarClientes = () => {
                                 <Button variant="info" onClick={() => handleShowModal(cliente)} className="me-2">
                                     Editar
                                 </Button>
-                                <Button variant="danger" onClick={() => handleDeleteClick(cliente.idCategoria)}>
+                                <Button variant="danger" onClick={() => handleDeleteClick(cliente.idCliente)}>
                                     Eliminar
                                 </Button>
                             </div>

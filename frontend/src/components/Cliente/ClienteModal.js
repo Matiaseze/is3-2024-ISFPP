@@ -157,7 +157,11 @@ const ClienteModal = ({ show, onHide, cliente, onClienteUpdated }) => {
                     Cerrar
                 </Button>
                 <Button variant="primary" onClick={isEditing ? handleSaveClick : handleEditClick}>
-                    <img src={isEditing ? saveIcon : editIcon} alt={isEditing ? "Guardar" : "Editar"} />
+                    <img 
+                        src={isEditing ? saveIcon : editIcon} 
+                        alt={isEditing ? "Guardar" : "Editar"} 
+                        style={{ width: "20px", height: "20px" }}
+                    />
                     {isEditing ? "Guardar" : "Editar"}
                 </Button>
             </Modal.Footer>
