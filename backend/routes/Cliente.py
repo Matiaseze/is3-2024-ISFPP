@@ -15,6 +15,11 @@ def get_cliente(idCliente: int, db: Session = Depends(get_db)):
         raise HTTPException(status_code=404, detail="EL cliente no existe.")
     return cliente
 
+@router.get("/", response_model=List[ClienteResponse])
+def listar_clientes(skip: int = 0, limit: int = 10, db: Session = Depends(get_db)):
+    clientes = db.query(Cliente).all() 
+    return clientes
+
 @router.post("/registrar", response_model=ClienteResponse, status_code=201)
 def crear_cliente(cliente: ClienteCreate, db: Session = Depends(get_db)):
     db_cliente = db.query(Cliente).filter(Cliente.dni == cliente.dni).first()
