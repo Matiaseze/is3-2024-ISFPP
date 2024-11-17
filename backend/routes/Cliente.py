@@ -28,14 +28,15 @@ def crear_cliente(cliente: ClienteCreate, db: Session = Depends(get_db)):
     
     localidad_objeto = db.query(Localidad).filter(Localidad.idLocalidad == cliente.localidad.idLocalidad).first()
     if not localidad_objeto:
+        raise HTTPException(status_code=400, detail="Localidad no encontrada.")
         # Crear localidad si no existe
-        localidad_objeto = Localidad(
-            nombre=cliente.localidad.nombre,
-            codPostal=cliente.localidad.codPostal
-        )
-        db.add(localidad_objeto)
-        db.commit()
-        db.refresh(localidad_objeto)
+        # localidad_objeto = Localidad(
+        #     nombre=cliente.localidad.nombre,
+        #     codPostal=cliente.localidad.codPostal
+        # )
+        # db.add(localidad_objeto)
+        # db.commit()
+        # db.refresh(localidad_objeto)
 
     nuevo_cliente = Cliente(
         nombre=cliente.nombre,
@@ -52,11 +53,21 @@ def crear_cliente(cliente: ClienteCreate, db: Session = Depends(get_db)):
 
 @router.put("/{idCliente}", response_model=ClienteResponse)
 def modificar_cliente(idCliente: int, cliente: ClienteUpdate, db: Session = Depends(get_db)):
-    db_cliente = db.query(Cliente).filter(Localidad.idCliente == idCliente).first()
+    db_cliente = db.query(Cliente).filter(Cliente.idCliente == idCliente).first()
     if not db_cliente:
         raise HTTPException(status_code=404, detail="El cliente no existe.")
-    for key, value in cliente.dict().items():
-        setattr(db_cliente, key, value)
+    
+    localidad = db.query(Localidad).filter(Localidad.idLocalidad == cliente.localidad.idLocalidad).first()
+    if not localidad:
+        raise HTTPException(status_code=400, detail="Localidad no encontrada.")
+    
+    db_cliente.dni=cliente.dni
+    db_cliente.tipoDoc=cliente.tipoDoc
+    db_cliente.nombre=cliente.nombre
+    db_cliente.apellido=cliente.apellido  
+    db_cliente.domicilio=cliente.domicilio
+    db_cliente.localidad=localidad       
+
     db.commit()
     db.refresh(db_cliente)
     return db_cliente
