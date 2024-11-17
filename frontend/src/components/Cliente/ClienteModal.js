@@ -16,7 +16,7 @@ const ClienteModal = ({ show, onHide, cliente, onClienteUpdated }) => {
     useEffect(() => {
         if (cliente) {
             setEditedCliente({ ...cliente });
-            setLocalidad(cliente.localidad); // Asigna la localidad actual del producto
+            setLocalidad(cliente.localidad); // Asigna la localidad actual del cliente
         }
         const fetchLocalidades = async () => {
             try {
@@ -48,7 +48,8 @@ const ClienteModal = ({ show, onHide, cliente, onClienteUpdated }) => {
         try {
             const clienteActualizado = {
                 ...editedCliente,
-                localidad: localidad.find((l) => l.idLocalidad === localidad.idLocalidad),
+                localidad: localidades.find((l) => l.idLocalidad === parseInt(editedCliente.idLocalidad))
+                // localidad: localidad.find((l) => l.idLocalidad === localidad.idLocalidad),
                 // categoria: editedProducto.categoria
             };
             console.log(clienteActualizado)
