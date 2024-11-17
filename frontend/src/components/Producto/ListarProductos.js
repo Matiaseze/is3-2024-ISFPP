@@ -208,7 +208,6 @@ const ListarProductos = ({ agregarAlCarrito, clienteSeleccionado, setClienteSele
             <Card
                 style={{
                     opacity: producto.baja ? 0.5 : 1,  // Aplica transparencia si baja es true
-                    pointerEvents: producto.baja ? 'none' : 'auto'  // Deshabilita interacciones si baja es true
                 }}
             >
                 <Card.Body>
@@ -232,20 +231,19 @@ const ListarProductos = ({ agregarAlCarrito, clienteSeleccionado, setClienteSele
                                 }
                                 handleCantidadChange(producto.idProducto, newValue);
                             }}
-                            disabled={producto.baja}  // Deshabilita el input si baja es true
+                            disabled={producto.baja || producto.stock === 0}  // Deshabilita el input si baja es true
                         />
                     </InputGroup>
                     <Button
                         variant="primary"
                         onClick={() => handleAgregarAlCarrito(producto)}
-                        disabled={producto.baja}  // Deshabilita el botón si baja es true
+                        disabled={producto.baja || producto.stock === 0}  // Deshabilita el botón si baja es true
                     >
                         Agregar al Carrito
                     </Button>
                     <Button
                         variant="info"
                         onClick={() => handleShowModal(producto)}
-                        disabled={producto.baja}  // Deshabilita el botón si baja es true
                     >
                         Ver Detalles
                     </Button>

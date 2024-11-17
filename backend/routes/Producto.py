@@ -95,3 +95,13 @@ def baja_producto(idProducto: int, db: Session = Depends(get_db)):
     db_producto.baja = True
     db.commit()
     return {"detail": "Producto dado de baja exitosamente"}
+
+@router.put("/{idProducto}/restablecer")
+def restablecer_producto(idProducto: int, db: Session = Depends(get_db)):
+    db_producto = db.query(Producto).filter(Producto.idProducto == idProducto).first()
+    if not db_producto:
+        raise HTTPException(status_code=404, detail="El producto no existe.")
+    db_producto.baja = False
+    db.commit()
+    return {"detail": "Producto ha sido reestablecido exitosamente"}
+

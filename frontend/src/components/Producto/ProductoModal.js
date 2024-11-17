@@ -6,8 +6,8 @@ import editIcon from '../../static/img/edit-button.png';
 import saveIcon from '../../static/img/floppy-disk.png';
 
 const ProductoModal = ({ show, onHide, producto, onProductoUpdated }) => {
-    const [marca, setMarca]  = useState('');
-    const [marcas, setMarcas]  = useState([]);
+    const [marca, setMarca] = useState('');
+    const [marcas, setMarcas] = useState([]);
     const [error, setError] = useState(null);
     const [isEditing, setIsEditing] = useState(false);
     const [editedProducto, setEditedProducto] = useState({ ...producto });
@@ -61,6 +61,27 @@ const ProductoModal = ({ show, onHide, producto, onProductoUpdated }) => {
         }
     };
 
+    const handleToggleBaja = async (producto) => {
+        try {
+            const response = await fetch(
+                `http://localhost:8000/productos/${producto.idProducto}/${producto.baja ? "restablecer" : "baja"}`,
+                {
+                    method: producto.baja ? "PUT" : "DELETE",
+                }
+            );
+            if (!response.ok) {
+                throw new Error("Error al cambiar el estado del producto.");
+            }
+    
+            // Actualiza el estado del producto tras la respuesta del backend
+            const updatedProducto = { ...producto, baja: !producto.baja };
+            onProductoUpdated(updatedProducto); // Callback para actualizar el estado en la lista
+        } catch (error) {
+            console.error(error);
+            alert("No se pudo cambiar el estado del producto.");
+        }
+    };
+
     return (
         <Modal show={show} onHide={onHide} aria-labelledby="contained-modal-title-vcenter">
             <Modal.Header closeButton>
@@ -70,27 +91,27 @@ const ProductoModal = ({ show, onHide, producto, onProductoUpdated }) => {
             </Modal.Header>
             <Modal.Body>
                 <Container>
-                {error && <p className="text-danger">{error}</p>}
-                <div style={{ display: 'flex', justifyContent: 'flex-start', marginBottom: '15px' }}>
-                    <Button
-                        variant="outline-primary"
-                        style={{
-                            position: "absolute",
-                            top: "10px",
-                            right: "10px",
-                            zIndex: "1",
-                            padding: "5px",
-                        }}
-                        onClick={isEditing ? handleSaveClick : handleEditClick}
+                    {error && <p className="text-danger">{error}</p>}
+                    <div style={{ display: 'flex', justifyContent: 'flex-start', marginBottom: '15px' }}>
+                        <Button
+                            variant="outline-primary"
+                            style={{
+                                position: "absolute",
+                                top: "10px",
+                                right: "10px",
+                                zIndex: "1",
+                                padding: "5px",
+                            }}
+                            onClick={isEditing ? handleSaveClick : handleEditClick}
                         >
                             <img
                                 src={isEditing ? saveIcon : editIcon}
                                 alt={isEditing ? "Guardar" : "Editar"}
                                 style={{ width: "20px", height: "20px" }} // Ajusta el tamaño si es necesario
                             />
-                    </Button>
-                </div>
-                    
+                        </Button>
+                    </div>
+
                     <Row>
                         <Col xs={12}>
                             <Form>
@@ -162,6 +183,12 @@ const ProductoModal = ({ show, onHide, producto, onProductoUpdated }) => {
             <Modal.Footer>
                 <Button variant="secondary" onClick={onHide}>
                     Cerrar
+                </Button>
+                <Button
+                    variant={editedProducto.baja ? "success" : "danger"}
+                    onClick={() => handleToggleBaja(producto)}
+                    >
+                        {producto?.baja ? "Rehabilitar Producto" : "Dar de Baja"}
                 </Button>
             </Modal.Footer>
         </Modal>

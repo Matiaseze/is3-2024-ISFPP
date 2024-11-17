@@ -5,6 +5,7 @@ import Navbar from './components/Navbar';
 import { ListarProductos, AltaProducto } from './components/Producto';
 import { ListarPedidos } from './components/Pedido';
 import { ListarCategorias, AltaCategoria } from './components/Categoria';
+import { ListarPagos } from './components/Pagos/ListarPagos';
 
 const App = () => {
 
@@ -26,6 +27,7 @@ const App = () => {
                 <Route path="/pedidos" element={<ListarPedidos setVistaActual={setVistaActual} />} />
                 <Route path="/categorias/" element={<ListarCategorias />} />
                 <Route path="/categorias/registrar" element={<AltaCategoria />} />
+                <Route path="/pagos" element={<ListarPagos />} />
             </Routes>
         </Router>
     );

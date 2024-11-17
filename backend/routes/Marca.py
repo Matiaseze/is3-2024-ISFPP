@@ -18,7 +18,6 @@ def marca_existente(nombre: str, db: Session):
     return db.query(Marca).filter(Marca.nombre == nombre, Marca.baja == False).first()
 
 
-
 @router.get("/{idMarca}", response_model=MarcaResponse)
 def get_marca(idMarca: int, db: Session = Depends(get_db)):
     return obtener_marca(idMarca, db)
