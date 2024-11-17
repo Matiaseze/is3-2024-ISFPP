@@ -1,6 +1,6 @@
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
-from models.Pago import Pago
+from models.Pago import Pago, TipoMedioPago
 from models.Cliente import Cliente
 from models.Pedido import Pedido
 from schemas.Pago import PagoCreate, PagoResponse
@@ -11,7 +11,10 @@ router = APIRouter()
 
 def calcular_saldo_pendiente(pedido_id, db):
     pagos = []
-    pagos = db.query(Pago).filter(Pago.idPago == pedido_id).all()
+
+    pedido = db.query(Pago).filter(Pedido.idPedido == pedido_id).first()
+    
+    pagos = db.query(Pago).filter(Pago.idPago == pedido.idPedido).all()
 
     for pago in pagos:
         monto_restante = pedido.montoTotal - pago.monto_abonado 
@@ -19,14 +22,20 @@ def calcular_saldo_pendiente(pedido_id, db):
     return monto_restante
 
 
+@router.get("/medios_pago", status_code=200)
+def get_medios_pago():
+    return [medio.value for medio in TipoMedioPago]
+    
+
+
 @router.get("/{idPago}", response_model=PagoResponse, status_code=200)
-def get_pago(idPago: PedidoResponse, db: Session = Depends(get_db)):
+def get_pago(idPago: int, db: Session = Depends(get_db)):
     pago_db = db.query(Pago).filter(Pago.idPago == idPago).first()
 
     saldo_pendiente = calcular_saldo_pendiente(pago_db.idPedido, db)
-    return pago_db, saldo_pendiente
+    return {"pago": pago_db, "saldo_pendiente": saldo_pendiente}
 
-@router.post("/crear_pago", response_model=PedidoResponse, status_code=201)
+@router.post("/crear_pago", response_model=PagoCreate, status_code=201)
 def crear_pago(pago: PagoCreate, db: Session = Depends(get_db)):
     
     pedido_a_pagar = db.query(Pedido).filter(Pedido.idPedido == pago.idPedido).first()

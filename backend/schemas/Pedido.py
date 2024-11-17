@@ -4,7 +4,6 @@ from datetime import datetime
 from schemas.Producto import ProductoResponse
 from models.Pedido import EstadoPedido
 from schemas.Cliente import ClienteResponse
-from schemas.Pago import PagoResponse
 
 class PedidoBase(BaseModel):
     montoTotal: float
@@ -33,7 +32,6 @@ class DetallePedidoResponse(DetallePedidoBase):
 class PedidoResponse(PedidoBase):
     idPedido: int
     fechaPedido: datetime
-    pagos: List[PagoResponse]
     detalles: List[DetallePedidoResponse] 
 
     class Config:

@@ -5,7 +5,7 @@ import Navbar from './components/Navbar';
 import { ListarProductos, AltaProducto } from './components/Producto';
 import { ListarPedidos } from './components/Pedido';
 import { ListarCategorias, AltaCategoria } from './components/Categoria';
-import { ListarPagos } from './components/Pagos/ListarPagos';
+import { ListarPagos } from './components/Pago';
 
 const App = () => {
 

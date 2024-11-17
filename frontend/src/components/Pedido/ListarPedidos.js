@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { Container, Table, Button, Modal } from 'react-bootstrap';
 import FiltroPedidos from './FiltroPedidos';
+import { RegistrarPagoModal } from '../Pago/';
 
 const ListarPedidos = () => {
     const [loading, setLoading] = useState(true);
@@ -11,6 +12,9 @@ const ListarPedidos = () => {
     const [modalShow, setModalShow] = useState(false);
     const [detallesPedido, setDetallesPedido] = useState(null);
     const [selectedPedidoId, setSelectedPedidoId] = useState(null);
+
+    const [modalPagoShow, setModalPagoShow] = useState(false);
+    const [selectedPedidoPagoId, setSelectedPedidoPagoId] = useState(null);
 
     useEffect(() => {
         const fetchPedidos = async () => {
@@ -87,6 +91,27 @@ const ListarPedidos = () => {
         setSelectedPedidoId(null);
     };
 
+    const handleShowPagoModal = (idPedido) => {
+        setSelectedPedidoPagoId(idPedido);
+        setModalPagoShow(true);
+    };
+
+    const handleClosePagoModal = () => {
+        setModalPagoShow(false);
+        setSelectedPedidoPagoId(null);
+    };
+
+    const actualizarPedidos = async () => {
+        // Función para refrescar la lista de pedidos después de registrar un pago
+        try {
+            const response = await axios.get('http://localhost:8000/pedidos');
+            setPedidos(response.data);
+            setPedidosFiltrados(response.data);
+        } catch (error) {
+            console.error('Error al actualizar los pedidos:', error);
+        }
+    };
+
     if (loading) return <p>Cargando pedidos...</p>;
     if (error) return <p>{error}</p>;
 
@@ -126,12 +151,24 @@ const ListarPedidos = () => {
                                 >
                                     Cancelar
                                 </Button>
+                                <Button
+                                    variant="success"
+                                    onClick={() => handleShowPagoModal(pedido.idPedido)}
+                                    disabled={pedido.estado === 'CANCELADO'}
+                                >
+                                    Registrar Pago
+                                </Button>
                             </td>
                         </tr>
                     ))}
                 </tbody>
             </Table>
-
+            <RegistrarPagoModal
+                show={modalPagoShow}
+                onHide={handleClosePagoModal}
+                pedidoId={selectedPedidoPagoId}
+                onPagoRegistrado={actualizarPedidos}
+            />
             {/* Modal para ver detalles del pedido */}
             <Modal show={modalShow} onHide={handleCloseModal}>
                 <Modal.Header closeButton>

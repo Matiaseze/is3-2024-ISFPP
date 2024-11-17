@@ -9,7 +9,6 @@ const ListarPagos = () => {
     const [mostrarDetalles, setMostrarDetalles] = useState(false);
 
     useEffect(() => {
-        // Cargar los pagos desde el backend
         const fetchPagos = async () => {
             try {
                 const response = await axios.get('http://localhost:8000/pagos');
@@ -77,7 +76,7 @@ const ListarPagos = () => {
             </Table>
 
             {mostrarDetalles && (
-                <DetallesPago 
+                <PagoModal 
                     pago={pagoSeleccionado} 
                     cerrarModal={() => setMostrarDetalles(false)} 
                 />

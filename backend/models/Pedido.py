@@ -3,6 +3,7 @@ from sqlalchemy.orm import relationship
 from datetime import datetime
 from database import Base
 import enum
+
 class EstadoPedido(enum.Enum):
     INICIADO = "INICIADO"
     PAGADO = "PAGADO"

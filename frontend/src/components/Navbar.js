@@ -90,6 +90,17 @@ const NavbarApp = ({ carrito, setCarrito, vistaActual, clienteSeleccionado }) =>
                         <NavDropdown.Item href="/pedidos">Listado de pedidos</NavDropdown.Item>
                     </NavDropdown>
                 </Nav>
+                <Nav className="mx-auto">  {/* Centra el menú en la barra */}
+                    <NavDropdown title="Categorias" id="navbarScrollingDropdown">
+                        <NavDropdown.Item href="/categorias/registrar">Registrar nueva categoría</NavDropdown.Item>
+                        <NavDropdown.Item href="/categorias">Listado de categorías</NavDropdown.Item>
+                    </NavDropdown>
+                </Nav>
+                <Nav className="mx-auto">  {/* Centra el menú en la barra */}
+                    <NavDropdown title="Pagos" id="navbarScrollingDropdown">
+                        <NavDropdown.Item href="/pagos">Listar pagos</NavDropdown.Item>
+                    </NavDropdown>
+                </Nav>
                 <Nav>
                     {vistaActual === 'catalogo' && ( // Solo mostrar el carrito si estamos en la vista de catálogo
                         <NavDropdown title={`Carrito (${carrito.reduce((acc, p) => acc + p.cantidad, 0)} productos)`} id="navbarScrollingCart">
@@ -116,7 +127,7 @@ const NavbarApp = ({ carrito, setCarrito, vistaActual, clienteSeleccionado }) =>
 
                                     <NavDropdown.Item className="text-center">
                                         <Button variant="success" onClick={manejarCompra}>
-                                            Comprar
+                                            Registrar Pedido
                                         </Button>
                                     </NavDropdown.Item>
 
@@ -130,17 +141,6 @@ const NavbarApp = ({ carrito, setCarrito, vistaActual, clienteSeleccionado }) =>
                             )}
                         </NavDropdown>
                     )}
-                </Nav>
-                <Nav className="mx-auto">  {/* Centra el menú en la barra */}
-                    <NavDropdown title="Categorias" id="navbarScrollingDropdown">
-                        <NavDropdown.Item href="/categorias/registrar">Registrar nueva categoría</NavDropdown.Item>
-                        <NavDropdown.Item href="/categorias">Listado de categorías</NavDropdown.Item>
-                    </NavDropdown>
-                </Nav>
-                <Nav className="mx-auto">  {/* Centra el menú en la barra */}
-                    <NavDropdown title="Pagos" id="navbarScrollingDropdown">
-                        <NavDropdown.Item href="/pagos">Registrar nueva categoría</NavDropdown.Item>
-                    </NavDropdown>
                 </Nav>
             </Container>
         </Navbar>

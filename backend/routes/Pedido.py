@@ -2,6 +2,7 @@ from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 from models.Pedido import Pedido, DetallePedido
 from models.Producto import Producto
+from models.Pago import Pago
 from schemas.Pedido import PedidoCreate, PedidoResponse, DetallePedidoResponse
 from schemas.Pago import PagoResponse
 from database import get_db
@@ -10,9 +11,9 @@ from typing import List
 router = APIRouter()
 
 
-@router.get("/", response_model=PedidoResponse)
-def get_pedido(pedido: PedidoResponse, db: Session = Depends(get_db)):
-    pedido_db = db.query(Pedido).filter(Pedido.idPedido == pedido.idPedido).first() 
+@router.get("/{idPedido}", response_model=PedidoResponse)
+def get_pedido(idPedido: int, db: Session = Depends(get_db)):
+    pedido_db = db.query(Pedido).filter(Pedido.idPedido == idPedido).first() 
     return pedido_db
 
 @router.post("/crear_pedido", response_model=PedidoResponse, status_code=201)
@@ -56,7 +57,7 @@ def crear_pedido(pedido: PedidoCreate, db: Session = Depends(get_db)):
 
 @router.get("/", response_model=List[PedidoResponse])
 def listar_pedidos(db: Session = Depends(get_db)):
-    pedidos = db.query(Pedido).all() 
+    pedidos = db.query(Pedido).all()
     return pedidos
 
 @router.delete("/{idPedido}/cancelar", response_model=PedidoResponse, status_code=200)
@@ -77,7 +78,7 @@ def cancelar_pedido(idPedido: int, db: Session = Depends(get_db)):
     return db_pedido
 
 @router.put("/{idPedido}/iniciar", response_model=PedidoResponse, status_code=200)
-def inciar_pedido(idPedido: int, db: Session = Depends(get_db)):
+def iniciar_pedido(idPedido: int, db: Session = Depends(get_db)):
     db_pedido = db.query(Pedido).filter(Pedido.idPedido == idPedido).first()
     if not db_pedido:
         raise HTTPException(status_code=404, detail="El pedido no existe.")
