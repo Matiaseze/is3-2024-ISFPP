@@ -10,15 +10,17 @@ from typing import List
 router = APIRouter()
 
 def calcular_saldo_pendiente(pedido_id, db):
-    pagos = []
 
-    pedido = db.query(Pago).filter(Pedido.idPedido == pedido_id).first()
-    
-    pagos = db.query(Pago).filter(Pago.idPago == pedido.idPedido).all()
+    pedido = db.query(Pedido).filter(Pedido.idPedido == pedido_id).first()
+    if not pedido:
+        raise HTTPException(status_code=404, detail="Pedido no encontrado.")
 
-    for pago in pagos:
-        monto_restante = pedido.montoTotal - pago.monto_abonado 
+    # Sumar los montos abonados de todos los pagos relacionados con el pedido
+    pagos = db.query(Pago).filter(Pago.idPedido == pedido_id).all()
+    total_abonado = sum(pago.monto_abonado for pago in pagos)
 
+    # Calcular el saldo pendiente
+    monto_restante = pedido.montoTotal - total_abonado
     return monto_restante
 
 
@@ -26,7 +28,6 @@ def calcular_saldo_pendiente(pedido_id, db):
 def get_medios_pago():
     return [medio.value for medio in TipoMedioPago]
     
-
 
 @router.get("/{idPago}", response_model=PagoResponse, status_code=200)
 def get_pago(idPago: int, db: Session = Depends(get_db)):
@@ -37,27 +38,28 @@ def get_pago(idPago: int, db: Session = Depends(get_db)):
 
 @router.post("/crear_pago", response_model=PagoCreate, status_code=201)
 def crear_pago(pago: PagoCreate, db: Session = Depends(get_db)):
-    
+
     pedido_a_pagar = db.query(Pedido).filter(Pedido.idPedido == pago.idPedido).first()
     if not pedido_a_pagar:
-        raise HTTPException(status_code=404, detail="No se entro el pedido.")
-    
+        raise HTTPException(status_code=404, detail="No se encontró el pedido.")
+
     cliente_en_pago = db.query(Cliente).filter(Cliente.idCliente == pago.idCliente).first()
     if not cliente_en_pago:
-        raise HTTPException(status_code=404, detail="No se encontro el cliente.")
-    
+        raise HTTPException(status_code=404, detail="No se encontró el cliente.")
+
     saldo_pendiente = calcular_saldo_pendiente(pedido_a_pagar.idPedido, db)
 
-    if pedido.monto_abonado > monto_restante:
-        raise HTTPException(status_code=400, detail="El monto es mayor al saldo pendiente")
+    # Validar que el monto abonado no exceda el saldo pendiente
+    if pago.monto_abonado > saldo_pendiente:
+        raise HTTPException(status_code=400, detail="El monto abonado excede el saldo pendiente.")
 
-    # Creando el pago
+    # Crear el nuevo pago
     nuevo_pago = Pago(
-        monto_abonado = pago.monto_abonado,
-        medio_de_pago = pago.medio_de_pago,
-        fecha = pago.fecha,
-        idCliente = pago.idCliente,
-        idPedido = pago.idCliente
+        monto_abonado=pago.monto_abonado,
+        medio_de_pago=pago.medio_de_pago,
+        fecha=pago.fecha,
+        idCliente=pago.idCliente,
+        idPedido=pago.idPedido,
     )
 
     db.add(nuevo_pago)

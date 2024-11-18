@@ -59,7 +59,6 @@ const NavbarApp = ({ carrito, setCarrito, vistaActual, clienteSeleccionado }) =>
         };
 
         try {
-            console.log(pedido)
             const response = await axios.post('http://localhost:8000/pedidos/crear_pedido', pedido);
             if (response.status === 201) {
                 alert("Pedido creado con éxito.");

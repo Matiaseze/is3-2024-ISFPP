@@ -12,6 +12,7 @@ const ListarPedidos = () => {
     const [modalShow, setModalShow] = useState(false);
     const [detallesPedido, setDetallesPedido] = useState(null);
     const [selectedPedidoId, setSelectedPedidoId] = useState(null);
+    const [selectedClienteId, setSelectedClienteId] = useState(null);
 
     const [modalPagoShow, setModalPagoShow] = useState(false);
     const [selectedPedidoPagoId, setSelectedPedidoPagoId] = useState(null);
@@ -91,8 +92,9 @@ const ListarPedidos = () => {
         setSelectedPedidoId(null);
     };
 
-    const handleShowPagoModal = (idPedido) => {
+    const handleShowPagoModal = (idPedido, idCliente) => {
         setSelectedPedidoPagoId(idPedido);
+        setSelectedClienteId(idCliente);
         setModalPagoShow(true);
     };
 
@@ -153,7 +155,7 @@ const ListarPedidos = () => {
                                 </Button>
                                 <Button
                                     variant="success"
-                                    onClick={() => handleShowPagoModal(pedido.idPedido)}
+                                    onClick={() => handleShowPagoModal(pedido.idPedido, pedido.cliente.idCliente)}
                                     disabled={pedido.estado === 'CANCELADO'}
                                 >
                                     Registrar Pago
@@ -167,7 +169,9 @@ const ListarPedidos = () => {
                 show={modalPagoShow}
                 onHide={handleClosePagoModal}
                 pedidoId={selectedPedidoPagoId}
+                clienteId={selectedClienteId}
                 onPagoRegistrado={actualizarPedidos}
+
             />
             {/* Modal para ver detalles del pedido */}
             <Modal show={modalShow} onHide={handleCloseModal}>

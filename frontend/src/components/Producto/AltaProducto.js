@@ -42,7 +42,6 @@ const AltaProducto = () => {
             categoria: categoriaCompleta
         };
         try {
-            console.log(nuevoProducto)
             const response = await axios.post('http://localhost:8000/productos/registrar', nuevoProducto);
             if (response.status === 201) {
                 setSuccess(true);
