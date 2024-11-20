@@ -2,31 +2,30 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { Container, Card, Button, Alert } from 'react-bootstrap';
 import ClienteModal from './ClienteModal';
-//import FiltroProductos from './FiltroProductos'; // Importar el componente de filtro
+import FiltroClientes from './FiltroClientes'; // Importar el componente de filtro
 
 const ListarClientes = () => {
     const [loading, setLoading] = useState(true);   // Indicador de carga
     const [error, setError] = useState(null);       // Manejo de errores
-    // const [filteredClientes, setFilteredClientes] = useState([]);
+    const [filteredClientes, setFilteredClientes] = useState([]);
     const [showModal, setShowModal] = useState(false);
     const [selectedCliente, setSelectedCliente] = useState(null);
     const [deleteMessage, setDeleteMessage] = useState(null);  // Nuevo estado para el mensaje de eliminación
 
     // Filtros
-    /* const [nombreFilter, setNombreFilter] = useState('');
-    const [marcaFilter, setMarcaFilter] = useState('');
-    const [categoriaFilter, setCategoriaFilter] = useState('');
-    const [precioMin, setPrecioMin] = useState('');
-    const [precioMax, setPrecioMax] = useState(''); */
-
-    // Listas de marcas y categorías (puedes obtenerlas de tu API)
-    // const [marcasDisponibles, setMarcasDisponibles] = useState([]);
+    const [nombreFilter, setNombreFilter] = useState('');
+    const [apellidoFilter, setApellidoFilter] = useState('');
+    const [documentoFilter, setDocumentoFilter] = useState('');
+    const [localidadFilter, setLocalidadFilter] = useState('');
+    
+    // Lista de localidades (puedes obtenerlas de tu API)
+    const [localidadesDisponibles, setLocalidadesDisponibles] = useState([]);
 
     // Para menjar los clientes
     const [clientes, setClientes] = useState([]);
 
     /* useEffect(() => {
-        setVistaActual('catalogo'); // Actualiza la vista actual a "catalogo"
+        setVistaActual('listado de clientes'); // Actualiza la vista actual a "listado de clientes"
     }, [setVistaActual]); */
 
     useEffect(() => {
@@ -34,7 +33,10 @@ const ListarClientes = () => {
             try {
                 const response = await axios.get('http://localhost:8000/clientes/');  // Asumiendo que la URL de clientes es esta
                 setClientes(response.data);
-                // setFilteredClientes(response.data); // Inicialmente muestra todos los clientes
+                setFilteredClientes(response.data); // Inicialmente muestra todos los clientes
+                // Extraer localidades únicas
+                const localidades = [...new Set(response.data.map(cliente => cliente.localidad.nombre))];
+                setLocalidadesDisponibles(localidades);
                 // Localidades disponibles
                 // const localidades = [...new Set(response.data.map(p => p.localidad))];
                 // setLocalidadesDisponibles(localidades);
@@ -47,18 +49,43 @@ const ListarClientes = () => {
         fetchClientes();
     }, []);
 
-    /* useEffect(() => {
+    useEffect(() => {
         const filterClientes = () => {
             let tempClientes = [...clientes];
 
+            // Filtrar por documento solo si documentoFilter no esta vacio
+            if (documentoFilter) {
+                tempClientes = tempClientes.filter(cliente =>
+                    cliente.dni === parseInt(documentoFilter)
+                );
+            }
+
+            // Filtrar por nombre solo si nombreFilter no está vacío
             if (nombreFilter) {
                 tempClientes = tempClientes.filter(cliente =>
                     cliente.nombre.toLowerCase().includes(nombreFilter.toLowerCase())
                 );
             }
+
+            // Filtrar por nombre solo si nombreFilter no está vacío
+            if (apellidoFilter) {
+                tempClientes = tempClientes.filter(cliente =>
+                    cliente.apellido.toLowerCase().includes(apellidoFilter.toLowerCase())
+                );
+            }
+
+            // Filtrar por localidad solo si localidadFilter no está vacío
+            if (localidadFilter) {
+                tempClientes = tempClientes.filter(cliente =>
+                    cliente.localidad.nombre.toLowerCase() === localidadFilter.toLowerCase()
+                );
+            }
+
+            setFilteredClientes(tempClientes); // Actualiza la lista filtrada
         };
+
         filterClientes();
-    }, [nombreFilter, clientes]); */
+    }, [documentoFilter, nombreFilter, apellidoFilter, localidadFilter, clientes]);
 
     const handleShowModal = (cliente) => {
         setSelectedCliente(cliente);
@@ -93,39 +120,6 @@ const ListarClientes = () => {
         }
     };
 
-    /* const handleAgregarAlCarrito = (producto) => {
-        // Verifica si un cliente está seleccionado antes de agregar al carrito
-        if (!clienteSeleccionado) {
-            alert('Debes seleccionar un cliente antes de agregar productos al carrito.');
-            return;
-        }
-
-        // Agregar producto al carrito con el cliente
-        const productoConCliente = {
-            ...producto,  // Propiedades del producto
-            cliente: clienteSeleccionado,  // Añadir el id del cliente seleccionado
-            cantidad: cantidadSeleccionada[producto.idProducto] || 1  // Cantidad seleccionada, por defecto 1
-        };
-
-        // Llamar a la función que agrega al carrito, pasando el producto con cliente
-        agregarAlCarrito(productoConCliente);
-    };
-    // Maneja el cambio en la cantidad seleccionada para un producto específico
-    const handleCantidadChange = (productoId, nuevaCantidad) => {
-        setCantidadSeleccionada((prevCantidades) => {
-            console.log("Actualizando cantidad para producto:", productoId, "a", nuevaCantidad);
-            return {
-                ...prevCantidades,
-                [productoId]: nuevaCantidad
-            };
-        });
-    }; */
-
-    /* const handleClienteChange = (e) => {
-        const clienteId = e.target.value;
-        const cliente = clientes.find(c => c.idCliente.toString() === clienteId);
-        setClienteSeleccionado(cliente);
-    }; */
     if (loading) return <p>Cargando clientes...</p>; // Muestra mientras carga
     if (error) return <p>{error}</p>; // Muestra el error
 
@@ -136,29 +130,19 @@ const ListarClientes = () => {
             {/* Muestra el mensaje de eliminación si existe */}
             {deleteMessage && <Alert variant="success">{deleteMessage}</Alert>}
 
-            {/* Selector de Cliente */}
-            {/* <Form.Group controlId="clienteSeleccionado">
-                <Form.Label>Selecciona un Cliente</Form.Label>
-                <Form.Control
-                    as="select"
-                    value={clienteSeleccionado ? clienteSeleccionado.idCliente : ''}
-                    onChange={handleClienteChange}
-                >
-                    <option value="">Elige un cliente</option>
-                    {clientes.map((cliente, index) => (
-                        <option key={`${cliente.idCliente}-${index}`} value={cliente.idCliente}>
-                            {cliente.nombre} {cliente.apellido}
-                        </option>
-                    ))}
-                </Form.Control>
-            </Form.Group> */}
             {/* Usar el componente de filtro */}
-            {/* <FiltroClientes
+            <FiltroClientes
+                documentoFilter={documentoFilter}
+                setDocumentoFilter={setDocumentoFilter}
                 nombreFilter={nombreFilter}
                 setNombreFilter={setNombreFilter}
-            /> */}
-            {/* <Row> */}
-            {clientes.map((cliente) => (
+                apellidoFilter={apellidoFilter}
+                setApellidoFilter={setApellidoFilter}
+                localidadFilter={localidadFilter}
+                setLocalidadFilter={setLocalidadFilter}
+                localidadesDisponibles={localidadesDisponibles} // Pasar localidades al hijo
+            />
+            {filteredClientes.map((cliente) => (
                 // <Col key={cliente.idCliente} sm={12} md={6} lg={4} className="mb-4">
                     <Card
                         style={{
@@ -175,29 +159,6 @@ const ListarClientes = () => {
                                 <strong>domicilio:</strong> {cliente.domicilio} <br />
                                 <strong>localidad:</strong> {cliente.localidad.nombre} <br />
                             </Card.Text>
-                            {/* <InputGroup className="mb-3">
-                                <FormControl
-                                    type="number"
-                                    min="1"
-                                    max={producto.stock}
-                                    value={cantidadSeleccionada[producto.idProducto] || 1}
-                                    onChange={(e) => {
-                                        let newValue = parseInt(e.target.value) || 1;
-                                        if (newValue > producto.stock) {
-                                            newValue = producto.stock;
-                                        }
-                                        handleCantidadChange(producto.idProducto, newValue);
-                                    }}
-                                    disabled={producto.baja}  // Deshabilita el input si baja es true
-                                />
-                            </InputGroup> */}
-                            {/* <Button
-                                variant="info"
-                                onClick={() => handleShowModal(cliente)}
-                                disabled={cliente.baja}  // Deshabilita el botón si baja es true
-                            >
-                                Ver Detalles
-                            </Button> */}
                             <div>
                                 <Button variant="info" onClick={() => handleShowModal(cliente)} className="me-2">
                                     Editar
@@ -210,7 +171,6 @@ const ListarClientes = () => {
                     </Card>
                 // </Col>
             ))}
-            {/* </Row> */}
             <ClienteModal
                 show={showModal}
                 onHide={handleCloseModal}
