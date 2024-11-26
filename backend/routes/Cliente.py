@@ -17,7 +17,8 @@ def get_cliente(idCliente: int, db: Session = Depends(get_db)):
 
 @router.get("/", response_model=List[ClienteResponse])
 def listar_clientes(skip: int = 0, limit: int = 10, db: Session = Depends(get_db)):
-    clientes = db.query(Cliente).filter(Cliente.baja == False).offset(skip).limit(limit).all() 
+    # clientes = db.query(Cliente).filter(Cliente.baja == False).offset(skip).limit(limit).all()
+    clientes = db.query(Cliente).all() 
     return clientes
 
 @router.post("/registrar", response_model=ClienteResponse, status_code=201)
