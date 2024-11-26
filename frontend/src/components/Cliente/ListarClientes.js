@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import { Container, Card, Button, Alert } from 'react-bootstrap';
+import { Container, Card, Button, Alert, Form} from 'react-bootstrap';
 import ClienteModal from './ClienteModal';
 import FiltroClientes from './FiltroClientes'; // Importar el componente de filtro
 
@@ -23,6 +23,9 @@ const ListarClientes = () => {
 
     // Para menjar los clientes
     const [clientes, setClientes] = useState([]);
+
+    // Nuevo estado para el checkbox "Mostrar solo clientes activos"
+    const [mostrarActivos, setMostrarActivos] = useState(true);
 
     /* useEffect(() => {
         setVistaActual('listado de clientes'); // Actualiza la vista actual a "listado de clientes"
@@ -53,10 +56,15 @@ const ListarClientes = () => {
         const filterClientes = () => {
             let tempClientes = [...clientes];
 
+            // Filtrar por clientes activos si el checkbox está marcado
+            if (mostrarActivos) {
+                tempClientes = tempClientes.filter(cliente => cliente.baja === false);
+            }
+
             // Filtrar por documento solo si documentoFilter no esta vacio
             if (documentoFilter) {
                 tempClientes = tempClientes.filter(cliente =>
-                    cliente.dni === parseInt(documentoFilter)
+                    cliente.documento === parseInt(documentoFilter)
                 );
             }
 
@@ -85,7 +93,7 @@ const ListarClientes = () => {
         };
 
         filterClientes();
-    }, [documentoFilter, nombreFilter, apellidoFilter, localidadFilter, clientes]);
+    }, [documentoFilter, nombreFilter, apellidoFilter, localidadFilter, clientes, mostrarActivos]);
 
     const handleShowModal = (cliente) => {
         setSelectedCliente(cliente);
@@ -129,6 +137,16 @@ const ListarClientes = () => {
 
             {/* Muestra el mensaje de eliminación si existe */}
             {deleteMessage && <Alert variant="success">{deleteMessage}</Alert>}
+            {error && <Alert variant="danger">{error}</Alert>}
+
+            {/* Checkbox para filtrar clientes activos */}
+            <Form.Check
+                type="checkbox"
+                label="Mostrar solo clientes activos"
+                checked={mostrarActivos}
+                onChange={(e) => setMostrarActivos(e.target.checked)}
+                disabled
+            />
 
             {/* Usar el componente de filtro */}
             <FiltroClientes
@@ -154,7 +172,7 @@ const ListarClientes = () => {
                             <Card.Title>{cliente.nombre}{cliente.apellido}</Card.Title>
                             {/* <Card.Subtitle className="mb-2 text-muted">{cliente.localidad.nombre}</Card.Subtitle> */}
                             <Card.Text>
-                                <strong>dni:</strong> {cliente.dni} <br />
+                                <strong>documento:</strong> {cliente.documento} <br />
                                 <strong>tipoDoc:</strong> {cliente.tipoDoc} <br />
                                 <strong>domicilio:</strong> {cliente.domicilio} <br />
                                 <strong>localidad:</strong> {cliente.localidad.nombre} <br />

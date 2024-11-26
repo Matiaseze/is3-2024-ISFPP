@@ -1,6 +1,6 @@
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
-from models.Cliente import Cliente
+from models.Cliente import Cliente, TipoDoc
 from models.Localidad import Localidad
 from schemas.Cliente import ClienteCreate, ClienteUpdate, ClienteResponse
 from database import get_db
@@ -17,14 +17,17 @@ def get_cliente(idCliente: int, db: Session = Depends(get_db)):
 
 @router.get("/", response_model=List[ClienteResponse])
 def listar_clientes(skip: int = 0, limit: int = 10, db: Session = Depends(get_db)):
-    clientes = db.query(Cliente).all() 
+    clientes = db.query(Cliente).filter(Cliente.baja == False).offset(skip).limit(limit).all() 
     return clientes
 
 @router.post("/registrar", response_model=ClienteResponse, status_code=201)
 def crear_cliente(cliente: ClienteCreate, db: Session = Depends(get_db)):
-    db_cliente = db.query(Cliente).filter(Cliente.dni == cliente.dni).first()
+    db_cliente = db.query(Cliente).filter(Cliente.documento == cliente.documento).first()
     if db_cliente:
         raise HTTPException(status_code=400, detail="El cliente ya existe.")
+    
+    if cliente.tipoDoc not in TipoDoc:
+        raise HTTPException(status_code=400, detail="Tipo de documento no válido.")
     
     localidad_objeto = db.query(Localidad).filter(Localidad.idLocalidad == cliente.localidad.idLocalidad).first()
     if not localidad_objeto:
@@ -41,7 +44,7 @@ def crear_cliente(cliente: ClienteCreate, db: Session = Depends(get_db)):
     nuevo_cliente = Cliente(
         nombre=cliente.nombre,
         apellido=cliente.apellido,
-        dni=cliente.dni,
+        documento=cliente.documento,
         tipoDoc=cliente.tipoDoc,
         domicilio=cliente.domicilio,
         localidad=localidad_objeto
@@ -61,8 +64,8 @@ def modificar_cliente(idCliente: int, cliente: ClienteUpdate, db: Session = Depe
     if not localidad:
         raise HTTPException(status_code=400, detail="Localidad no encontrada.")
     
-    db_cliente.dni=cliente.dni
-    db_cliente.tipoDoc=cliente.tipoDoc
+    # db_cliente.dni=cliente.dni
+    # db_cliente.tipoDoc=cliente.tipoDoc
     db_cliente.nombre=cliente.nombre
     db_cliente.apellido=cliente.apellido  
     db_cliente.domicilio=cliente.domicilio

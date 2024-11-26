@@ -11,7 +11,7 @@ class TipoDoc(enum.Enum):
 class Cliente(Base):
     __tablename__ = "clientes"
     idCliente = Column(Integer, primary_key=True, index=True)
-    dni = Column(Integer, nullable=False)
+    documento = Column(Integer, nullable=False)
     tipoDoc = Column(Enum(TipoDoc), nullable=False)
     nombre = Column(String, nullable=False)
     apellido = Column(String, nullable=False)

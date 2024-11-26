@@ -6,7 +6,7 @@ from models.Cliente import TipoDoc  # Importa el enumerado TipoDoc
 class ClienteBase(BaseModel):
     nombre: str
     apellido: str
-    dni: int
+    documento: int
     tipoDoc: TipoDoc
     domicilio: str
     localidad: LocalidadResponse

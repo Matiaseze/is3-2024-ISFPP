@@ -62,6 +62,14 @@ const ClienteModal = ({ show, onHide, cliente, onClienteUpdated }) => {
         }
     };
 
+    const handleBajaChange = () => {
+        // Cambia el valor de baja cuando se tilda o desmarca
+        setEditedCliente((prevState) => ({
+            ...prevState,
+            baja: !prevState.baja
+        }));
+    };
+
     return (
         <Modal show={show} onHide={onHide} aria-labelledby="cliente-modal-title">
             <Modal.Header closeButton>
@@ -75,29 +83,6 @@ const ClienteModal = ({ show, onHide, cliente, onClienteUpdated }) => {
                     <Row>
                         <Col xs={12}>
                             <Form>
-                                <Form.Group controlId="dni">
-                                    <Form.Label>DNI</Form.Label>
-                                    <Form.Control
-                                        type="number"
-                                        name="dni"
-                                        value={editedCliente.dni || ""}
-                                        onChange={handleInputChange}
-                                        readOnly={!isEditing}
-                                    />
-                                </Form.Group>
-                                {/* <Form.Group controlId="formTipoDoc">
-                                    <Form.Label>Tipo de Documento</Form.Label>
-                                    <Form.Select 
-                                        value={tipoDoc} 
-                                        onChange={(e) => setTipoDoc(e.target.value)} 
-                                        required
-                                    >
-                                        <option value="">Selecciona el tipo de documento</option>
-                                        <option value="DNI">DNI</option>
-                                        <option value="CUIL">CUIL</option>
-                                        <option value="CUIT">CUIT</option>
-                                    </Form.Select>
-                                </Form.Group> */}
                                 <Form.Group controlId="nombre">
                                     <Form.Label>Nombre</Form.Label>
                                     <Form.Control
@@ -147,6 +132,17 @@ const ClienteModal = ({ show, onHide, cliente, onClienteUpdated }) => {
                                             </option>
                                         ))}
                                     </Form.Select>
+                                </Form.Group>
+
+                                {/* Checkbox para cambiar el estado de 'baja' */}
+                                <Form.Group controlId="baja">
+                                    <Form.Check
+                                        type="checkbox"
+                                        label="Cliente Activo"
+                                        checked={!editedCliente.baja} // Marca el checkbox si baja es false
+                                        onChange={handleBajaChange}
+                                        disabled={!isEditing} // Solo habilitado en modo edición
+                                    />
                                 </Form.Group>
                             </Form>
                         </Col>

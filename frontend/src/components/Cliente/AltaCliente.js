@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from 'react';
-import { Container, Form, Button } from 'react-bootstrap';
+import { Container, Form, Button, Alert } from 'react-bootstrap';
 import axios from 'axios';
 
 const AltaCliente = () => {
-    const [dni, setDni] = useState('');
+    const [documento, setDocumento] = useState('');
     const [tipoDoc, setTipoDoc] = useState('');
     const [nombre, setNombre] = useState('');
     const [apellido, setApellido] = useState('');
@@ -26,7 +26,7 @@ const AltaCliente = () => {
 
         // La base requiere SI O SI que le manden el tipo de dato correcto!
         const nuevoCliente = { 
-            dni, 
+            documento, 
             tipoDoc, 
             nombre, 
             apellido,
@@ -40,7 +40,7 @@ const AltaCliente = () => {
             if (response.status === 201) {
                 setSuccess(true);
                 setError(null);
-                setDni('');
+                setDocumento('');
                 setTipoDoc('');
                 setNombre('');
                 setApellido('');
@@ -76,14 +76,18 @@ const AltaCliente = () => {
     return (
         <Container className="mt-4">
             <h1 className="text-center mb-4">Alta de Cliente</h1>
+
+            {success && <Alert variant="success">¡Cliente registrado con éxito!</Alert>}
+            {error && <Alert variant="danger">{error}</Alert>}
+
             <Form onSubmit={handleSubmit}>
-                <Form.Group controlId="formDni">
-                    <Form.Label>Dni</Form.Label>
+                <Form.Group controlId="formDocumento">
+                    <Form.Label>Documento</Form.Label>
                     <Form.Control 
                         type="text" 
-                        placeholder="Ingrese el dni del cliente" 
-                        value={dni} 
-                        onChange={(e) => setDni(e.target.value)} 
+                        placeholder="Ingrese el documento del cliente" 
+                        value={documento} 
+                        onChange={(e) => setDocumento(e.target.value)} 
                         required 
                     />
                 </Form.Group>
