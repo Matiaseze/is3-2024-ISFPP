@@ -1,85 +1,78 @@
-import React, { useState } from 'react';
-import { Form, Button } from 'react-bootstrap';
+import React from 'react';
+import { Form, Row, Col } from 'react-bootstrap';
 
-const FiltroPedidos = ({ onFilter }) => {
-    const [fechaInicio, setFechaInicio] = useState('');
-    const [fechaFin, setFechaFin] = useState('');
-    const [cliente, setCliente] = useState('');
-    const [estado, setEstado] = useState('');
-    const [montoMin, setMontoMin] = useState('');
-    const [montoMax, setMontoMax] = useState('');
-
-    const handleSubmit = (e) => {
-        e.preventDefault();
-        onFilter({ fechaInicio, fechaFin, cliente, estado, montoMin, montoMax });
+const FiltroPedidos = ({ filtros, setFiltros }) => {
+    const manejarCambioFiltro = (e) => {
+        const { name, value } = e.target;
+        setFiltros({ ...filtros, [name]: value }); // Actualiza directamente los filtros
     };
 
     return (
-        <Form onSubmit={handleSubmit} className="mb-3">
-            <Form.Group controlId="fechaInicio">
-                <Form.Label>Fecha Inicio</Form.Label>
-                <Form.Control 
-                    type="date" 
-                    value={fechaInicio} 
-                    onChange={(e) => setFechaInicio(e.target.value)} 
-                />
-            </Form.Group>
-
-            <Form.Group controlId="fechaFin">
-                <Form.Label>Fecha Fin</Form.Label>
-                <Form.Control 
-                    type="date" 
-                    value={fechaFin} 
-                    onChange={(e) => setFechaFin(e.target.value)} 
-                />
-            </Form.Group>
-
-            <Form.Group controlId="cliente">
-                <Form.Label>Cliente</Form.Label>
-                <Form.Control 
-                    type="text" 
-                    placeholder="Nombre del cliente" 
-                    value={cliente} 
-                    onChange={(e) => setCliente(e.target.value)} 
-                />
-            </Form.Group>
-
-            <Form.Group controlId="estado">
-                <Form.Label>Estado</Form.Label>
-                <Form.Control 
-                    as="select" 
-                    value={estado} 
-                    onChange={(e) => setEstado(e.target.value)} 
-                >
-                    <option value="">Seleccione</option>
-                    <option value="true">Cancelado</option>
-                    <option value="false">No Cancelado</option>
-                </Form.Control>
-            </Form.Group>
-
-            <Form.Group controlId="montoMin">
-                <Form.Label>Monto Total Mínimo</Form.Label>
-                <Form.Control 
-                    type="number" 
-                    value={montoMin} 
-                    onChange={(e) => setMontoMin(e.target.value)} 
-                />
-            </Form.Group>
-
-            <Form.Group controlId="montoMax">
-                <Form.Label>Monto Total Máximo</Form.Label>
-                <Form.Control 
-                    type="number" 
-                    value={montoMax} 
-                    onChange={(e) => setMontoMax(e.target.value)} 
-                />
-            </Form.Group>
-
-            <Button variant="primary" type="submit">
-                Filtrar
-            </Button>
+        <Form className="mb-4">
+            <Row>
+                <Col md={3}>
+                    <Form.Label>Fecha Inicio</Form.Label>
+                    <Form.Control
+                        type="date"
+                        name="fechaInicio"
+                        value={filtros.fechaInicio || ''}
+                        onChange={manejarCambioFiltro}
+                    />
+                </Col>
+                <Col md={3}>
+                    <Form.Label>Fecha Fin</Form.Label>
+                    <Form.Control
+                        type="date"
+                        name="fechaFin"
+                        value={filtros.fechaFin || ''}
+                        onChange={manejarCambioFiltro}
+                    />
+                </Col>
+                <Col md={3}>
+                    <Form.Label>Cliente</Form.Label>
+                    <Form.Control
+                        type="text"
+                        name="cliente"
+                        placeholder="Nombre o Apellido"
+                        value={filtros.cliente || ''}
+                        onChange={manejarCambioFiltro}
+                    />
+                </Col>
+                <Col md={3}>
+                    <Form.Label>Estado</Form.Label>
+                    <Form.Select
+                        name="estado"
+                        value={filtros.estado || ''}
+                        onChange={manejarCambioFiltro}
+                    >
+                        <option value="">Todos</option>
+                        <option value="true">Cancelado</option>
+                        <option value="false">No Cancelado</option>
+                    </Form.Select>
+                </Col>
+            </Row>
+            <Row className="mt-3">
+                <Col md={3}>
+                    <Form.Label>Monto Total Mínimo</Form.Label>
+                    <Form.Control
+                        type="number"
+                        name="montoMin"
+                        value={filtros.montoMin || ''}
+                        onChange={manejarCambioFiltro}
+                    />
+                </Col>
+                <Col md={3}>
+                    <Form.Label>Monto Total Máximo</Form.Label>
+                    <Form.Control
+                        type="number"
+                        name="montoMax"
+                        value={filtros.montoMax || ''}
+                        onChange={manejarCambioFiltro}
+                    />
+                </Col>
+            </Row>
         </Form>
     );
 };
 
-export default FiltroPedidos
+export default FiltroPedidos;

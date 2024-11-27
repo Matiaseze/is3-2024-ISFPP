@@ -9,6 +9,15 @@ const ListarPedidos = () => {
     const [error, setError] = useState(null);
     const [pedidos, setPedidos] = useState([]);
     const [pedidosFiltrados, setPedidosFiltrados] = useState([]);
+    const [filtros, setFiltros] = useState({
+        fechaInicio: '',
+        fechaFin: '',
+        cliente: '',
+        estado: '',
+        montoMin: '',
+        montoMax: '',
+    });
+
     const [modalShow, setModalShow] = useState(false);
     const [detallesPedido, setDetallesPedido] = useState(null);
     const [selectedPedidoId, setSelectedPedidoId] = useState(null);
@@ -17,14 +26,14 @@ const ListarPedidos = () => {
     const [modalPagoShow, setModalPagoShow] = useState(false);
     const [selectedPedidoPagoId, setSelectedPedidoPagoId] = useState(null);
 
+    // Cargar pedidos
     useEffect(() => {
         const fetchPedidos = async () => {
             setLoading(true);
             try {
-                const response = await axios.get('http://localhost:8000/pedidos'); // Ajusta la URL según sea necesario
-                console.log(response.data)
+                const response = await axios.get('http://localhost:8000/pedidos');
                 setPedidos(response.data);
-                setPedidosFiltrados(response.data);
+                setPedidosFiltrados(response.data); // Inicialmente, todos los pedidos
                 setLoading(false);
             } catch (error) {
                 console.error("Error al obtener los pedidos:", error);
@@ -36,12 +45,47 @@ const ListarPedidos = () => {
         fetchPedidos();
     }, []);
 
+    // Aplicar filtros
+    useEffect(() => {
+        const aplicarFiltros = () => {
+            let filtered = [...pedidos];
+
+            if (filtros.fechaInicio) {
+                filtered = filtered.filter(pedido => new Date(pedido.fechaPedido) >= new Date(filtros.fechaInicio));
+            }
+            if (filtros.fechaFin) {
+                filtered = filtered.filter(pedido => new Date(pedido.fechaPedido) <= new Date(filtros.fechaFin));
+            }
+            if (filtros.cliente) {
+                const clienteFiltro = filtros.cliente.toLowerCase();
+                filtered = filtered.filter(
+                    pedido =>
+                        `${pedido.cliente.nombre} ${pedido.cliente.apellido}`.toLowerCase().includes(clienteFiltro)
+                );
+            }
+            if (filtros.estado !== '') {
+                filtered = filtered.filter(pedido => pedido.estado.toString() === filtros.estado);
+            }
+            if (filtros.montoMin) {
+                filtered = filtered.filter(pedido => pedido.montoTotal >= parseFloat(filtros.montoMin));
+            }
+            if (filtros.montoMax) {
+                filtered = filtered.filter(pedido => pedido.montoTotal <= parseFloat(filtros.montoMax));
+            }
+
+            setPedidosFiltrados(filtered);
+        };
+
+        aplicarFiltros();
+    }, [filtros, pedidos]);
+
+    // Función para cancelar pedido
     const cancelarPedido = async (idPedido) => {
         try {
             await axios.delete(`http://localhost:8000/pedidos/${idPedido}/cancelar`);
             setPedidos(prevPedidos =>
                 prevPedidos.map(pedido =>
-                    pedido.idPedido === idPedido ? { ...pedido, cancelado: true } : pedido
+                    pedido.idPedido === idPedido ? { ...pedido, estado: 'CANCELADO' } : pedido
                 )
             );
         } catch (err) {
@@ -49,35 +93,11 @@ const ListarPedidos = () => {
         }
     };
 
-    const handleFilter = (filters) => {
-        let filtered = pedidos;
-
-        if (filters.fechaInicio) {
-            filtered = filtered.filter(pedido => new Date(pedido.fechaPedido) >= new Date(filters.fechaInicio));
-        }
-        if (filters.fechaFin) {
-            filtered = filtered.filter(pedido => new Date(pedido.fechaPedido) <= new Date(filters.fechaFin));
-        }
-        if (filters.cliente) {
-            filtered = filtered.filter(pedido => pedido.nombreCliente.toLowerCase().includes(filters.cliente.toLowerCase()));
-        }
-        if (filters.estado !== '') {
-            filtered = filtered.filter(pedido => pedido.estado.toString() === filters.estado);
-        }
-        if (filters.montoMin) {
-            filtered = filtered.filter(pedido => pedido.montoTotal >= parseFloat(filters.montoMin));
-        }
-        if (filters.montoMax) {
-            filtered = filtered.filter(pedido => pedido.montoTotal <= parseFloat(filters.montoMax));
-        }
-
-        setPedidosFiltrados(filtered);
-    };
-
+    // Mostrar detalles del pedido
     const handleShowModal = async (idPedido) => {
         setSelectedPedidoId(idPedido);
         try {
-            const response = await axios.get(`http://localhost:8000/pedidos/${idPedido}/detalles`); // Ajusta la URL según sea necesario
+            const response = await axios.get(`http://localhost:8000/pedidos/${idPedido}/detalles`);
             setDetallesPedido(response.data);
             setModalShow(true);
         } catch (error) {
@@ -92,6 +112,7 @@ const ListarPedidos = () => {
         setSelectedPedidoId(null);
     };
 
+    // Mostrar modal de pago
     const handleShowPagoModal = (idPedido, idCliente) => {
         setSelectedPedidoPagoId(idPedido);
         setSelectedClienteId(idCliente);
@@ -104,7 +125,6 @@ const ListarPedidos = () => {
     };
 
     const actualizarPedidos = async () => {
-        // Función para refrescar la lista de pedidos después de registrar un pago
         try {
             const response = await axios.get('http://localhost:8000/pedidos');
             setPedidos(response.data);
@@ -120,14 +140,14 @@ const ListarPedidos = () => {
     return (
         <Container>
             <h1>Listado de Pedidos</h1>
-            <FiltroPedidos onFilter={handleFilter} />
+            <FiltroPedidos filtros={filtros} setFiltros={setFiltros} />
             <Table striped bordered hover>
                 <thead>
                     <tr>
                         <th>ID</th>
                         <th>Cliente</th>
                         <th>Fecha</th>
-                        <th>Activo</th>
+                        <th>Estado</th>
                         <th>Monto Total</th>
                         <th>Acciones</th>
                     </tr>
@@ -137,18 +157,14 @@ const ListarPedidos = () => {
                         <tr key={pedido.idPedido}>
                             <td>{pedido.idPedido}</td>
                             <td>{pedido.cliente.nombre} {pedido.cliente.apellido}</td>
-                            <td>{new Date(pedido.fechaPedido).toLocaleDateString('es-ES', { year: 'numeric', month: '2-digit', day: '2-digit' })}</td>
+                            <td>{new Date(pedido.fechaPedido).toLocaleDateString('es-ES')}</td>
                             <td>{pedido.estado}</td>
                             <td>{pedido.montoTotal}</td>
                             <td>
                                 <Button variant="info" onClick={() => handleShowModal(pedido.idPedido)}>Detalles</Button>
                                 <Button
                                     variant="danger"
-                                    onClick={() => {
-                                        if (window.confirm("¿DESEA CANCELAR ESTE PEDIDO?")) {
-                                            cancelarPedido(pedido.idPedido);
-                                        }
-                                    }}
+                                    onClick={() => cancelarPedido(pedido.idPedido)}
                                     disabled={pedido.estado === 'CANCELADO'}
                                 >
                                     Cancelar

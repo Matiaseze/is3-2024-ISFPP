@@ -10,12 +10,12 @@ const DetallesPago = ({ pago, cerrarModal }) => {
                 <Modal.Title>Detalles del Pago</Modal.Title>
             </Modal.Header>
             <Modal.Body>
-                <p><strong>ID:</strong> {pago.idPago}</p>
-                <p><strong>Monto:</strong> {pago.monto_abonado}</p>
-                <p><strong>Medio de Pago:</strong> {pago.medio_de_pago}</p>
-                <p><strong>Fecha:</strong> {new Date(pago.fecha).toLocaleString()}</p>
-                <p><strong>ID Cliente:</strong> {pago.idCliente}</p>
-                <p><strong>ID Pedido:</strong> {pago.idPedido}</p>
+                <p><strong>Pago N°: </strong>{pago.idPago}</p>
+                <p><strong>Monto: </strong>{pago.monto_abonado}</p>
+                <p><strong>Medio de pago: </strong>{pago.medio_de_pago}</p>
+                <p><strong>Fecha de pago: </strong>{new Date(pago.fecha).toLocaleString()}</p>
+                <p><strong>Cliente: </strong>{`${pago.cliente.nombre} ${pago.cliente.apellido}`}</p>
+                <p><strong>Pedido N°: </strong>{pago.idPedido}</p>
             </Modal.Body>
             <Modal.Footer>
                 <Button variant="secondary" onClick={cerrarModal}>

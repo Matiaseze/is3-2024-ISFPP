@@ -68,11 +68,42 @@ def crear_pago(pago: PagoCreate, db: Session = Depends(get_db)):
 
     return nuevo_pago
 
-@router.get("/", response_model=List[PagoResponse])
+@router.get("/", response_model=List[dict])
 def listar_pagos(db: Session = Depends(get_db)):
-    pagos = db.query(Pago).all() 
-    cliente = db.query(Cliente).filter(Cliente.idCliente == pagos.idCliente).first()
-    return pagos
+    query = (
+        db.query(
+            Pago.idPago,
+            Pago.monto_abonado,
+            Pago.medio_de_pago,
+            Pago.fecha,
+            Pago.idPedido,
+            Pago.idCliente,
+            Cliente.nombre.label("nombre_cliente"),
+            Cliente.apellido.label("apellido_cliente"),
+            Pedido.montoTotal.label("monto_total_pedido"),
+        )
+        .join(Cliente, Cliente.idCliente == Pago.idCliente)
+        .join(Pedido, Pedido.idPedido == Pago.idPedido)
+    )
+    pagos = query.all()
+    # Mapeo de pagos a los datos requeridos
+    pagos_con_detalles = [
+        {
+            "idPago": pago.idPago,
+            "monto_abonado": pago.monto_abonado,
+            "medio_de_pago": pago.medio_de_pago,
+            "fecha": pago.fecha,
+            "idPedido": pago.idPedido,
+            "idCliente": pago.idCliente,
+            "cliente": {
+                "nombre": pago.nombre_cliente,
+                "apellido": pago.apellido_cliente,
+            },
+            "monto_total": pago.monto_total_pedido,
+        }
+        for pago in pagos
+    ]
+    return pagos_con_detalles
 
 @router.delete("/{idPago}/eliminar", response_model=PagoResponse, status_code=200)
 def cancelar_pago(idPago: int, db: Session = Depends(get_db)):

@@ -7,14 +7,14 @@ class PagoBase(BaseModel):
     monto_abonado: float
     medio_de_pago: TipoMedioPago
     fecha: datetime
+    idPedido: int
+    idCliente: int
     
 class PagoCreate(PagoBase):
-    idCliente: int
-    idPedido: int
+    pass
 
 class PagoResponse(PagoBase):
     idPago: int
-    idPedido: int
 
     class Config:
         orm_mode = True
