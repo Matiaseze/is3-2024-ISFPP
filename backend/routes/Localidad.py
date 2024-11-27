@@ -7,9 +7,9 @@ from typing import List
 
 router = APIRouter()
 
-@router.get("/{codPostal}", response_model=LocalidadResponse)
-def get_localidad(codPostal: int, db: Session = Depends(get_db)):
-    localidad = db.query(Localidad).filter(Localidad.codPostal == codPostal).first()
+@router.get("/{idLocalidad}", response_model=LocalidadResponse)
+def get_localidad(idLocalidad: int, db: Session = Depends(get_db)):
+    localidad = db.query(Localidad).filter(Localidad.idLocalidad == idLocalidad).first()
     if not localidad:
         raise HTTPException(status_code=404, detail="La localidad no existe.")
     return localidad
@@ -30,9 +30,9 @@ def crear_localidad(localidad: LocalidadCreate, db: Session = Depends(get_db)):
     db.refresh(nueva_localidad)
     return nueva_localidad
 
-@router.put("/{codPostal}", response_model=LocalidadResponse)
-def modificar_localidad(codPostal: int, localidad: LocalidadUpdate, db: Session = Depends(get_db)):
-    db_localidad = db.query(Localidad).filter(Localidad.codPostal == codPostal).first()
+@router.patch("/{idLocalidad}", response_model=LocalidadResponse)
+def modificar_localidad(idLocalidad: int, localidad: LocalidadUpdate, db: Session = Depends(get_db)):
+    db_localidad = db.query(Localidad).filter(Localidad.idLocalidad == idLocalidad).first()
     if not db_localidad:
         raise HTTPException(status_code=404, detail="La localidad no existe.")
     for key, value in localidad.dict().items():
@@ -41,9 +41,9 @@ def modificar_localidad(codPostal: int, localidad: LocalidadUpdate, db: Session 
     db.refresh(db_localidad)
     return db_localidad
 
-@router.delete("/{codPostal}")
-def baja_localidad(codPostal: int, db: Session = Depends(get_db)):
-    db_localidad = db.query(Localidad).filter(Localidad.codPostal == codPostal).first()
+@router.delete("/{idLocalidad}")
+def baja_localidad(idLocalidad: int, db: Session = Depends(get_db)):
+    db_localidad = db.query(Localidad).filter(Localidad.idLocalidad == idLocalidad).first()
     if not db_localidad:
         raise HTTPException(status_code=404, detail="La localidad no existe.")
     db_localidad.baja = True

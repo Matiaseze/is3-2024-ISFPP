@@ -79,9 +79,21 @@ const NavbarApp = ({ carrito, setCarrito, vistaActual, clienteSeleccionado }) =>
             <Container>
                 <Navbar.Brand href="/">Home</Navbar.Brand>
                 <Nav className="mx-auto">
+                    <NavDropdown title="Clientes" id="navbarScrollingDropdown">
+                        <NavDropdown.Item href="/clientes/registrar">Registrar nuevo Cliente</NavDropdown.Item>
+                        <NavDropdown.Item href="/clientes">Listado de clientes</NavDropdown.Item>
+                    </NavDropdown>
+                </Nav>
+                <Nav className="mx-auto">
                     <NavDropdown title="Productos" id="navbarScrollingDropdown">
                         <NavDropdown.Item href="/productos/registrar">Registrar nuevo Producto</NavDropdown.Item>
                         <NavDropdown.Item href="/productos">Catálogo</NavDropdown.Item>
+                    </NavDropdown>
+                </Nav>
+                <Nav className="mx-auto">
+                    <NavDropdown title="Marcas" id="navbarScrollingDropdown">
+                        <NavDropdown.Item href="/marcas/registrar">Registrar nueva Marca</NavDropdown.Item>
+                        <NavDropdown.Item href="/marcas">Catálogo</NavDropdown.Item>
                     </NavDropdown>
                 </Nav>
                 <Nav className="mx-auto">
@@ -140,6 +152,18 @@ const NavbarApp = ({ carrito, setCarrito, vistaActual, clienteSeleccionado }) =>
                             )}
                         </NavDropdown>
                     )}
+                </Nav>
+                <Nav className="mx-auto">  {/* Centra el menú en la barra */}
+                    <NavDropdown title="Categorias" id="navbarScrollingDropdown">
+                        <NavDropdown.Item href="/categorias/registrar">Registrar nueva categoría</NavDropdown.Item>
+                        <NavDropdown.Item href="/categorias">Listado de categorías</NavDropdown.Item>
+                    </NavDropdown>
+                </Nav>
+                <Nav className="mx-auto">  {/* Centra el menú en la barra */}
+                    <NavDropdown title="Localidades" id="navbarScrollingDropdown">
+                        <NavDropdown.Item href="/localidades/registrar">Registrar nueva localidad</NavDropdown.Item>
+                        <NavDropdown.Item href="/localidades">Listado de localidades</NavDropdown.Item>
+                    </NavDropdown>
                 </Nav>
             </Container>
         </Navbar>

@@ -9,10 +9,11 @@ class LocalidadCreate(LocalidadBase):
     pass
 
 class LocalidadUpdate(LocalidadBase):
-    pass
+    baja: bool
 
 class LocalidadResponse(LocalidadBase):
     idLocalidad: int
-
+    baja: bool
+    
     class Config:
         orm_mode = True
