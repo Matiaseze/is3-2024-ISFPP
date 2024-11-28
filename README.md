@@ -129,14 +129,7 @@ bash
 git clone https://github.com/tuusuario/tu-repositorio.git
 cd tu-repositorio
 
-2. Crear la aplicación React
-
-En la carpeta frontend/, inicializa el proyecto React (si no lo has hecho ya):
-
-cd frontend
-npx create-react-app .
-
-3. Configurar e iniciar el proyecto con Docker
+2. Configurar e iniciar el proyecto con Docker
 
 Desde el directorio raíz del proyecto (donde está el archivo docker-compose.yml), ejecutar:
 
@@ -149,7 +142,7 @@ Esto levantará los siguientes servicios:
     FastAPI en localhost:8000
     React en localhost:3000
 
-4. Acceder a los servicios
+3. Acceder a los servicios
 
     pgAdmin: Accede a http://localhost:5050 con las siguientes credenciales:
         Email: admin@admin.com
