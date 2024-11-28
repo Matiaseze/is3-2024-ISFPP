@@ -68,19 +68,23 @@ const ListarLocalidades = () => {
             {deleteMessage && <Alert variant="success">{deleteMessage}</Alert>}
 
             {localidades.map((localidad) => (
-                <Card key={localidad.idLocalidad} className="mb-3">
+                <Card key={localidad.idLocalidad} className="mb-3"
+                    style= {{
+                        opacity: localidad.baja ? 0.5 : 1,
+                    }}
+                >
                     <Card.Body className="d-flex justify-content-between align-items-center">
                         <div>
                             <Card.Title>{localidad.nombre}</Card.Title>
-                            {/* <Card.Text>
-                                <strong>Descripción:</strong> {categoria.descripcion || "Sin descripción"}
-                            </Card.Text> */}
                         </div>
                         <div>
                             <Button variant="info" onClick={() => handleShowModal(localidad)} className="me-2">
                                 Editar
                             </Button>
-                            <Button variant="danger" onClick={() => handleDeleteClick(localidad.idLocalidad)}>
+                            <Button variant="danger" 
+                                    onClick={() => handleDeleteClick(localidad.idLocalidad)}
+                                    disabled= {localidad.baja}
+                                >
                                 Eliminar
                             </Button>
                         </div>

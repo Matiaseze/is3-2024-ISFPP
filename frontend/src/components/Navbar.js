@@ -101,13 +101,7 @@ const NavbarApp = ({ carrito, setCarrito, vistaActual, clienteSeleccionado }) =>
                         <NavDropdown.Item href="/pedidos">Listado de pedidos</NavDropdown.Item>
                     </NavDropdown>
                 </Nav>
-                <Nav className="mx-auto">  {/* Centra el menú en la barra */}
-                    <NavDropdown title="Categorias" id="navbarScrollingDropdown">
-                        <NavDropdown.Item href="/categorias/registrar">Registrar nueva categoría</NavDropdown.Item>
-                        <NavDropdown.Item href="/categorias">Listado de categorías</NavDropdown.Item>
-                    </NavDropdown>
-                </Nav>
-                <Nav className="mx-auto">  {/* Centra el menú en la barra */}
+                <Nav className="mx-auto">  
                     <NavDropdown title="Pagos" id="navbarScrollingDropdown">
                         <NavDropdown.Item href="/pagos">Listar pagos</NavDropdown.Item>
                     </NavDropdown>
@@ -153,13 +147,13 @@ const NavbarApp = ({ carrito, setCarrito, vistaActual, clienteSeleccionado }) =>
                         </NavDropdown>
                     )}
                 </Nav>
-                <Nav className="mx-auto">  {/* Centra el menú en la barra */}
+                <Nav className="mx-auto"> 
                     <NavDropdown title="Categorias" id="navbarScrollingDropdown">
                         <NavDropdown.Item href="/categorias/registrar">Registrar nueva categoría</NavDropdown.Item>
                         <NavDropdown.Item href="/categorias">Listado de categorías</NavDropdown.Item>
                     </NavDropdown>
                 </Nav>
-                <Nav className="mx-auto">  {/* Centra el menú en la barra */}
+                <Nav className="mx-auto"> 
                     <NavDropdown title="Localidades" id="navbarScrollingDropdown">
                         <NavDropdown.Item href="/localidades/registrar">Registrar nueva localidad</NavDropdown.Item>
                         <NavDropdown.Item href="/localidades">Listado de localidades</NavDropdown.Item>
