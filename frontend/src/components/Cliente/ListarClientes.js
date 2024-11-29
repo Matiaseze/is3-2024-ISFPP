@@ -164,7 +164,7 @@ const ListarClientes = () => {
                     }} */
                 >
                     <Card.Body>
-                        <Card.Title>{cliente.nombre}{cliente.apellido}</Card.Title>
+                        <Card.Title>{cliente.nombre} {cliente.apellido}</Card.Title>
                         {/* <Card.Subtitle className="mb-2 text-muted">{cliente.localidad.nombre}</Card.Subtitle> */}
                         <Card.Text>
                             <strong>documento:</strong> {cliente.documento} <br />
