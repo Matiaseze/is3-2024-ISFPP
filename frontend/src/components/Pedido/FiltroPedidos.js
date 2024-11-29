@@ -1,7 +1,24 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { Form, Row, Col } from 'react-bootstrap';
+import axios from 'axios';
 
 const FiltroPedidos = ({ filtros, setFiltros }) => {
+    const [estadosPedido, setEstadosPedido] = useState([]);
+
+    // Obtener los estados del pedido desde el backend
+    useEffect(() => {
+        const fetchEstadosPedido = async () => {
+            try {
+                const response = await axios.get('http://localhost:8000/pedidos/estados_pedido');
+                setEstadosPedido(response.data);
+            } catch (error) {
+                console.error('Error al obtener los estados del pedido:', error);
+            }
+        };
+
+        fetchEstadosPedido();
+    }, []);
+
     const manejarCambioFiltro = (e) => {
         const { name, value } = e.target;
         setFiltros({ ...filtros, [name]: value }); // Actualiza directamente los filtros
@@ -46,8 +63,11 @@ const FiltroPedidos = ({ filtros, setFiltros }) => {
                         onChange={manejarCambioFiltro}
                     >
                         <option value="">Todos</option>
-                        <option value="true">Cancelado</option>
-                        <option value="false">No Cancelado</option>
+                        {estadosPedido.map((estado, index) => (
+                            <option key={index} value={estado}>
+                                {estado}
+                            </option>
+                        ))}
                     </Form.Select>
                 </Col>
             </Row>

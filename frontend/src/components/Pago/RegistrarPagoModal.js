@@ -51,14 +51,17 @@ const RegistrarPagoModal = ({ show, onHide, pedidoId, clienteId, onPagoRegistrad
     };
 
     try {
-        console.log(pago)
+        console.log(pago);
         await axios.post(`http://localhost:8000/pagos/crear_pago`, pago);
         alert('Pago registrado con éxito');
         onPagoRegistrado(); // Notifica al componente padre para actualizar la lista
         onHide(); // Cierra el modal
     } catch (error) {
         console.error('Error al registrar el pago:', error);
-        alert('Error al registrar el pago');
+    
+        // Extraer y mostrar el mensaje de error del backend
+        const errorMessage = error.response?.data?.detail || 'Ocurrió un error inesperado';
+        alert(`Error al registrar el pago: ${errorMessage}`);
     }
 };
 

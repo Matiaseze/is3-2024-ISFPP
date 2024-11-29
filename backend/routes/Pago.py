@@ -38,7 +38,7 @@ def get_pago(idPago: int, db: Session = Depends(get_db)):
 
 @router.post("/crear_pago", response_model=PagoCreate, status_code=201)
 def crear_pago(pago: PagoCreate, db: Session = Depends(get_db)):
-
+    print("ESTOY CREANDO UN PAGOOOOOOO")
     pedido_a_pagar = db.query(Pedido).filter(Pedido.idPedido == pago.idPedido).first()
     if not pedido_a_pagar:
         raise HTTPException(status_code=404, detail="No se encontró el pedido.")
@@ -48,8 +48,9 @@ def crear_pago(pago: PagoCreate, db: Session = Depends(get_db)):
         raise HTTPException(status_code=404, detail="No se encontró el cliente.")
 
     saldo_pendiente = calcular_saldo_pendiente(pedido_a_pagar.idPedido, db)
-
+    print(saldo_pendiente)
     # Validar que el monto abonado no exceda el saldo pendiente
+    print(pago.monto_abonado)
     if pago.monto_abonado > saldo_pendiente:
         raise HTTPException(status_code=400, detail="El monto abonado excede el saldo pendiente.")
 
@@ -63,6 +64,12 @@ def crear_pago(pago: PagoCreate, db: Session = Depends(get_db)):
     )
 
     db.add(nuevo_pago)
+
+    # Actualizar estado del pedido si el saldo se liquida
+    nuevo_saldo_pendiente = saldo_pendiente - pago.monto_abonado
+    if nuevo_saldo_pendiente == 0:
+        pedido_a_pagar.estado = "PAGADO"
+    
     db.commit()
     db.refresh(nuevo_pago)
 

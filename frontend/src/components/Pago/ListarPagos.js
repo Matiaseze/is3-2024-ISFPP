@@ -150,7 +150,7 @@ const ListarPagos = () => {
                                     variant="danger" 
                                     onClick={() => cancelarPago(pago.idPago)}
                                 >
-                                    Cancelar
+                                    Eliminar
                                 </Button>
                             </td>
                         </tr>

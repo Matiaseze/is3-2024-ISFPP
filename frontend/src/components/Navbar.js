@@ -45,12 +45,14 @@ const NavbarApp = ({ carrito, setCarrito, vistaActual, clienteSeleccionado }) =>
             cliente: {
                 nombre: clienteSeleccionado.nombre,
                 apellido: clienteSeleccionado.apellido,
-                dni: clienteSeleccionado.dni,
+                documento: clienteSeleccionado.documento,
                 tipoDoc: clienteSeleccionado.tipoDoc,
                 domicilio: clienteSeleccionado.domicilio,
                 localidad: {
+                    idLocalidad: clienteSeleccionado.localidad.idLocalidad,
                     nombre: clienteSeleccionado.localidad.nombre,
                     codPostal: clienteSeleccionado.localidad.codPostal,
+                    baja: clienteSeleccionado.localidad.baja,
                 },
                 idCliente: clienteSeleccionado.idCliente,
                 baja: clienteSeleccionado.baja,
@@ -59,6 +61,7 @@ const NavbarApp = ({ carrito, setCarrito, vistaActual, clienteSeleccionado }) =>
         };
 
         try {
+            console.log(pedido)
             const response = await axios.post('http://localhost:8000/pedidos/crear_pedido', pedido);
             if (response.status === 201) {
                 alert("Pedido creado con éxito.");
@@ -78,10 +81,28 @@ const NavbarApp = ({ carrito, setCarrito, vistaActual, clienteSeleccionado }) =>
         <Navbar bg="light" className="mb-3">
             <Container>
                 <Navbar.Brand href="/">Home</Navbar.Brand>
+                <Nav className="mx-auto">  {/* Centra el menú en la barra */}
+                    <NavDropdown title="Localidades" id="navbarScrollingDropdown">
+                        <NavDropdown.Item href="/localidades/registrar">Registrar nueva localidad</NavDropdown.Item>
+                        <NavDropdown.Item href="/localidades">Listado de localidades</NavDropdown.Item>
+                    </NavDropdown>
+                </Nav>
                 <Nav className="mx-auto">
                     <NavDropdown title="Clientes" id="navbarScrollingDropdown">
                         <NavDropdown.Item href="/clientes/registrar">Registrar nuevo Cliente</NavDropdown.Item>
                         <NavDropdown.Item href="/clientes">Listado de clientes</NavDropdown.Item>
+                    </NavDropdown>
+                </Nav>
+                <Nav className="mx-auto">
+                    <NavDropdown title="Marcas" id="navbarScrollingDropdown">
+                        <NavDropdown.Item href="/marcas/registrar">Registrar nueva Marca</NavDropdown.Item>
+                        <NavDropdown.Item href="/marcas">Listado de Marcas</NavDropdown.Item>
+                    </NavDropdown>
+                </Nav>
+                <Nav className="mx-auto">  {/* Centra el menú en la barra */}
+                    <NavDropdown title="Categorias" id="navbarScrollingDropdown">
+                        <NavDropdown.Item href="/categorias/registrar">Registrar nueva categoría</NavDropdown.Item>
+                        <NavDropdown.Item href="/categorias">Listado de categorías</NavDropdown.Item>
                     </NavDropdown>
                 </Nav>
                 <Nav className="mx-auto">
@@ -91,17 +112,11 @@ const NavbarApp = ({ carrito, setCarrito, vistaActual, clienteSeleccionado }) =>
                     </NavDropdown>
                 </Nav>
                 <Nav className="mx-auto">
-                    <NavDropdown title="Marcas" id="navbarScrollingDropdown">
-                        <NavDropdown.Item href="/marcas/registrar">Registrar nueva Marca</NavDropdown.Item>
-                        <NavDropdown.Item href="/marcas">Catálogo</NavDropdown.Item>
-                    </NavDropdown>
-                </Nav>
-                <Nav className="mx-auto">
                     <NavDropdown title="Pedidos" id="navbarScrollingDropdown">
                         <NavDropdown.Item href="/pedidos">Listado de pedidos</NavDropdown.Item>
                     </NavDropdown>
                 </Nav>
-                <Nav className="mx-auto">  
+                <Nav className="mx-auto">  {/* Centra el menú en la barra */}
                     <NavDropdown title="Pagos" id="navbarScrollingDropdown">
                         <NavDropdown.Item href="/pagos">Listar pagos</NavDropdown.Item>
                     </NavDropdown>
@@ -146,18 +161,6 @@ const NavbarApp = ({ carrito, setCarrito, vistaActual, clienteSeleccionado }) =>
                             )}
                         </NavDropdown>
                     )}
-                </Nav>
-                <Nav className="mx-auto"> 
-                    <NavDropdown title="Categorias" id="navbarScrollingDropdown">
-                        <NavDropdown.Item href="/categorias/registrar">Registrar nueva categoría</NavDropdown.Item>
-                        <NavDropdown.Item href="/categorias">Listado de categorías</NavDropdown.Item>
-                    </NavDropdown>
-                </Nav>
-                <Nav className="mx-auto"> 
-                    <NavDropdown title="Localidades" id="navbarScrollingDropdown">
-                        <NavDropdown.Item href="/localidades/registrar">Registrar nueva localidad</NavDropdown.Item>
-                        <NavDropdown.Item href="/localidades">Listado de localidades</NavDropdown.Item>
-                    </NavDropdown>
                 </Nav>
             </Container>
         </Navbar>
