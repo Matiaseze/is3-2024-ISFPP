@@ -1,6 +1,6 @@
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
-from models.Pedido import Pedido, DetallePedido
+from models.Pedido import Pedido, DetallePedido, EstadoPedido
 from models.Producto import Producto
 from models.Pago import Pago
 from schemas.Pedido import PedidoCreate, PedidoResponse, DetallePedidoResponse
@@ -9,6 +9,10 @@ from database import get_db
 from typing import List
 
 router = APIRouter()
+
+@router.get("/estados_pedido", status_code=200)
+def get_estados_pedido():
+    return [estado.value for estado in EstadoPedido]
 
 
 @router.get("/{idPedido}", response_model=PedidoResponse)

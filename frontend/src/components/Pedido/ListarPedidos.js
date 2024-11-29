@@ -172,9 +172,9 @@ const ListarPedidos = () => {
                                 <Button
                                     variant="success"
                                     onClick={() => handleShowPagoModal(pedido.idPedido, pedido.cliente.idCliente)}
-                                    disabled={pedido.estado === 'CANCELADO'}
+                                    disabled={pedido.estado === 'CANCELADO' || pedido.estado == 'PAGADO'}
                                 >
-                                    Registrar Pago
+                                    Pagar
                                 </Button>
                             </td>
                         </tr>
