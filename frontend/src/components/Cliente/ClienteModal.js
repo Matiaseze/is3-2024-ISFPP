@@ -48,6 +48,7 @@ const ClienteModal = ({ show, onHide, cliente, onClienteUpdated }) => {
         try {
             const clienteActualizado = {
                 ...editedCliente,
+                baja: editedCliente.baja, // Incluye el atributo baja
                 localidad: localidades.find((l) => l.idLocalidad === parseInt(editedCliente.idLocalidad))
                 // localidad: localidad.find((l) => l.idLocalidad === localidad.idLocalidad),
                 // categoria: editedProducto.categoria
