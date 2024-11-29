@@ -25,7 +25,7 @@ const ListarClientes = () => {
     const [clientes, setClientes] = useState([]);
 
     // Nuevo estado para el checkbox "Mostrar solo clientes activos"
-    const [mostrarActivos, setMostrarActivos] = useState(true);
+    const [mostrarActivos, setMostrarActivos] = useState(false);
 
     /* useEffect(() => {
         setVistaActual('listado de clientes'); // Actualiza la vista actual a "listado de clientes"
@@ -40,9 +40,6 @@ const ListarClientes = () => {
                 // Extraer localidades únicas
                 const localidades = [...new Set(response.data.map(cliente => cliente.localidad.nombre))];
                 setLocalidadesDisponibles(localidades);
-                // Localidades disponibles
-                // const localidades = [...new Set(response.data.map(p => p.localidad))];
-                // setLocalidadesDisponibles(localidades);
             } catch (err) {
                 setError("Error al cargar los clientes"); // Mensaje en caso de error
             } finally {
@@ -145,7 +142,6 @@ const ListarClientes = () => {
                 label="Mostrar solo clientes activos"
                 checked={mostrarActivos}
                 onChange={(e) => setMostrarActivos(e.target.checked)}
-                disabled
             />
 
             {/* Usar el componente de filtro */}
@@ -161,33 +157,31 @@ const ListarClientes = () => {
                 localidadesDisponibles={localidadesDisponibles} // Pasar localidades al hijo
             />
             {filteredClientes.map((cliente) => (
-                // <Col key={cliente.idCliente} sm={12} md={6} lg={4} className="mb-4">
-                    <Card
-                        style={{
-                            opacity: cliente.baja ? 0.5 : 1,  // Aplica transparencia si baja es true
-                            pointerEvents: cliente.baja ? 'none' : 'auto'  // Deshabilita interacciones si baja es true
-                        }}
-                    >
-                        <Card.Body>
-                            <Card.Title>{cliente.nombre}{cliente.apellido}</Card.Title>
-                            {/* <Card.Subtitle className="mb-2 text-muted">{cliente.localidad.nombre}</Card.Subtitle> */}
-                            <Card.Text>
-                                <strong>documento:</strong> {cliente.documento} <br />
-                                <strong>tipoDoc:</strong> {cliente.tipoDoc} <br />
-                                <strong>domicilio:</strong> {cliente.domicilio} <br />
-                                <strong>localidad:</strong> {cliente.localidad.nombre} <br />
-                            </Card.Text>
-                            <div>
-                                <Button variant="info" onClick={() => handleShowModal(cliente)} className="me-2">
-                                    Editar
-                                </Button>
-                                <Button variant="danger" onClick={() => handleDeleteClick(cliente.idCliente)}>
-                                    Eliminar
-                                </Button>
-                            </div>
-                        </Card.Body>
-                    </Card>
-                // </Col>
+                <Card
+                    /* style={{
+                        opacity: cliente.baja ? 0.5 : 1,  // Aplica transparencia si baja es true
+                        pointerEvents: cliente.baja ? 'none' : 'auto'  // Deshabilita interacciones si baja es true
+                    }} */
+                >
+                    <Card.Body>
+                        <Card.Title>{cliente.nombre}{cliente.apellido}</Card.Title>
+                        {/* <Card.Subtitle className="mb-2 text-muted">{cliente.localidad.nombre}</Card.Subtitle> */}
+                        <Card.Text>
+                            <strong>documento:</strong> {cliente.documento} <br />
+                            <strong>tipoDoc:</strong> {cliente.tipoDoc} <br />
+                            <strong>domicilio:</strong> {cliente.domicilio} <br />
+                            <strong>localidad:</strong> {cliente.localidad.nombre} <br />
+                        </Card.Text>
+                        <div>
+                            <Button variant="info" onClick={() => handleShowModal(cliente)} className="me-2">
+                                Editar
+                            </Button>
+                            <Button variant="danger" onClick={() => handleDeleteClick(cliente.idCliente)}>
+                                Eliminar
+                            </Button>
+                        </div>
+                    </Card.Body>
+                </Card>
             ))}
             <ClienteModal
                 show={showModal}
