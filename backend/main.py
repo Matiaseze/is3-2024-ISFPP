@@ -1,10 +1,9 @@
 from fastapi import FastAPI
 from database import engine, Base
 from models import Producto, Pedido, Marca, Cliente, Localidad, Pago, Categoria
-from routes import Producto, Pedido, Marca, Cliente, Localidad, Pago, Categoria
+from routes import Producto, Pedido, Marca, Cliente, Localidad, Pago, Categoria, masivos
 
 from fastapi.middleware.cors import CORSMiddleware
-
 app = FastAPI()
 
 #Middleware para la conexion con REACT
@@ -27,3 +26,5 @@ app.include_router(Cliente.router, prefix="/clientes", tags=["clientes"])
 app.include_router(Localidad.router, prefix="/localidades", tags=["localidades"])
 app.include_router(Categoria.router, prefix="/categorias", tags=["categorias"])
 app.include_router(Pago.router, prefix="/pagos", tags=["pagos"])
+
+app.include_router(masivos.router, prefix="/masivos", tags=["masivos"])
