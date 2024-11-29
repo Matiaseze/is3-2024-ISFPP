@@ -68,9 +68,10 @@ def modificar_cliente(idCliente: int, cliente: ClienteUpdate, db: Session = Depe
     # db_cliente.dni=cliente.dni
     # db_cliente.tipoDoc=cliente.tipoDoc
     db_cliente.nombre=cliente.nombre
-    db_cliente.apellido=cliente.apellido  
+    db_cliente.apellido=cliente.apellido
     db_cliente.domicilio=cliente.domicilio
-    db_cliente.localidad=localidad       
+    db_cliente.localidad=localidad
+    db_cliente.baja=cliente.baja
 
     db.commit()
     db.refresh(db_cliente)
