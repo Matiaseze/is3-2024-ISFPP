@@ -165,7 +165,7 @@ const ListarPedidos = () => {
                                 <Button
                                     variant="danger"
                                     onClick={() => cancelarPedido(pedido.idPedido)}
-                                    disabled={pedido.estado === 'CANCELADO'}
+                                    disabled={pedido.estado === 'CANCELADO' || pedido.estado == 'PAGADO'}
                                 >
                                     Cancelar
                                 </Button>

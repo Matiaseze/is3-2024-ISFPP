@@ -8,25 +8,34 @@ import saveIcon from '../../static/img/floppy-disk.png';
 const ProductoModal = ({ show, onHide, producto, onProductoUpdated }) => {
     const [marca, setMarca] = useState('');
     const [marcas, setMarcas] = useState([]);
+    const [categorias, setCategorias] = useState([]);
+    const [categoria, setCategoria] = useState('');
     const [error, setError] = useState(null);
     const [isEditing, setIsEditing] = useState(false);
     const [editedProducto, setEditedProducto] = useState({ ...producto });
-
 
     useEffect(() => {
         if (producto) {
             setEditedProducto({ ...producto });
             setMarca(producto.marca); // Asigna la marca actual del producto
+            setCategoria(producto.categoria); // Asigna la categoría actual del producto
         }
-        const fetchMarcas = async () => {
+
+        const fetchData = async () => {
             try {
-                const response = await axios.get('http://localhost:8000/marcas'); // Cambia la URL si es necesario
-                setMarcas(response.data);
+                // Fetch marcas
+                const marcasResponse = await axios.get('http://localhost:8000/marcas'); // Cambia la URL si es necesario
+                setMarcas(marcasResponse.data);
+
+                // Fetch categorías
+                const categoriasResponse = await axios.get('http://localhost:8000/categorias'); // Cambia la URL si es necesario
+                setCategorias(categoriasResponse.data);
             } catch (err) {
                 setError(err.message);
             }
         };
-        fetchMarcas();
+
+        fetchData();
     }, [producto]);
 
     useEffect(() => {
@@ -49,9 +58,9 @@ const ProductoModal = ({ show, onHide, producto, onProductoUpdated }) => {
             const productoActualizado = {
                 ...editedProducto,
                 marca: marcas.find((m) => m.idMarca === marca.idMarca),
-                categoria: editedProducto.categoria
+                categoria: categorias.find((c) => c.idCategoria === categoria.idCategoria),
             };
-            console.log(productoActualizado)
+
             await axios.put(`http://localhost:8000/productos/${producto.idProducto}`, productoActualizado);
             onProductoUpdated(productoActualizado);
             setIsEditing(false);
@@ -72,7 +81,7 @@ const ProductoModal = ({ show, onHide, producto, onProductoUpdated }) => {
             if (!response.ok) {
                 throw new Error("Error al cambiar el estado del producto.");
             }
-    
+
             // Actualiza el estado del producto tras la respuesta del backend
             const updatedProducto = { ...producto, baja: !producto.baja };
             onProductoUpdated(updatedProducto); // Callback para actualizar el estado en la lista
@@ -107,7 +116,7 @@ const ProductoModal = ({ show, onHide, producto, onProductoUpdated }) => {
                             <img
                                 src={isEditing ? saveIcon : editIcon}
                                 alt={isEditing ? "Guardar" : "Editar"}
-                                style={{ width: "20px", height: "20px" }} // Ajusta el tamaño si es necesario
+                                style={{ width: "20px", height: "20px" }}
                             />
                         </Button>
                     </div>
@@ -139,18 +148,37 @@ const ProductoModal = ({ show, onHide, producto, onProductoUpdated }) => {
                                 <Form.Group controlId="marca">
                                     <Form.Label>Marca</Form.Label>
                                     <Form.Select
-                                        value={marca?.idMarca || ""}  // Asegura que el valor sea el id de la marca actual o una cadena vacía
+                                        value={marca?.idMarca || ""}
                                         onChange={(e) => {
                                             const selectedMarca = marcas.find(m => m.idMarca === parseInt(e.target.value));
-                                            setMarca(selectedMarca);  // Actualiza el estado `marca`
-                                            setEditedProducto({ ...editedProducto, marca: selectedMarca });  // Actualiza `editedProducto` con el objeto de la nueva marca
+                                            setMarca(selectedMarca);
+                                            setEditedProducto({ ...editedProducto, marca: selectedMarca });
                                         }}
                                         disabled={!isEditing}
                                     >
                                         <option value="">Selecciona una marca</option>
-                                        {marcas.map((marcaItem, index) => (
-                                            <option key={`${marcaItem.idMarca}-${index}`} value={marcaItem.idMarca}>
+                                        {marcas.map((marcaItem) => (
+                                            <option key={marcaItem.idMarca} value={marcaItem.idMarca}>
                                                 {marcaItem.nombre}
+                                            </option>
+                                        ))}
+                                    </Form.Select>
+                                </Form.Group>
+                                <Form.Group controlId="categoria">
+                                    <Form.Label>Categoría</Form.Label>
+                                    <Form.Select
+                                        value={categoria?.idCategoria || ""}
+                                        onChange={(e) => {
+                                            const selectedCategoria = categorias.find(c => c.idCategoria === parseInt(e.target.value));
+                                            setCategoria(selectedCategoria);
+                                            setEditedProducto({ ...editedProducto, categoria: selectedCategoria });
+                                        }}
+                                        disabled={!isEditing}
+                                    >
+                                        <option value="">Selecciona una categoría</option>
+                                        {categorias.map((categoriaItem) => (
+                                            <option key={categoriaItem.idCategoria} value={categoriaItem.idCategoria}>
+                                                {categoriaItem.nombre}
                                             </option>
                                         ))}
                                     </Form.Select>
@@ -187,8 +215,8 @@ const ProductoModal = ({ show, onHide, producto, onProductoUpdated }) => {
                 <Button
                     variant={editedProducto.baja ? "success" : "danger"}
                     onClick={() => handleToggleBaja(producto)}
-                    >
-                        {producto?.baja ? "Rehabilitar Producto" : "Dar de Baja"}
+                >
+                    {producto?.baja ? "Rehabilitar Producto" : "Dar de Baja"}
                 </Button>
             </Modal.Footer>
         </Modal>

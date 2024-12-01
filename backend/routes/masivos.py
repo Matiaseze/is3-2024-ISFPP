@@ -5,18 +5,23 @@ from models.Cliente import Cliente, TipoDoc
 from models.Categoria import Categoria
 from models.Localidad import Localidad
 from models.Producto import Producto
+from models.Pedido import Pedido, DetallePedido
+
 
 from routes.Cliente import Cliente
 from routes.Categoria import Categoria
 from routes.Localidad import Localidad
 from routes.Marca import Marca
 from routes.Producto import Producto
+from routes.Pedido import Pedido 
+
 
 from schemas.Cliente import ClienteCreate
 from schemas.Categoria import CategoriaCreate
 from schemas.Localidad import LocalidadCreate
 from schemas.Marca import MarcaCreate
 from schemas.Producto import ProductoCreate
+from schemas.Pedido import PedidoCreate
 
 from database import get_db
 from typing import List
@@ -49,14 +54,6 @@ def crear_cliente(cliente: ClienteCreate, db: Session = Depends(get_db)):
     localidad_objeto = db.query(Localidad).filter(Localidad.idLocalidad == cliente.localidad.idLocalidad).first()
     if not localidad_objeto:
         raise HTTPException(status_code=400, detail="Localidad no encontrada.")
-        # Crear localidad si no existe
-        # localidad_objeto = Localidad(
-        #     nombre=cliente.localidad.nombre,
-        #     codPostal=cliente.localidad.codPostal
-        # )
-        # db.add(localidad_objeto)
-        # db.commit()
-        # db.refresh(localidad_objeto)
 
     nuevo_cliente = Cliente(
         nombre=cliente.nombre,
@@ -125,6 +122,45 @@ def crear_producto(producto: ProductoCreate, db: Session = Depends(get_db)):
     return nuevo_producto
 
 
+def crear_pedido(pedido: PedidoCreate, db: Session = Depends(get_db)):
+    
+    for detalle in pedido.detalles:
+        producto_en_detalle = db.query(Producto).filter(Producto.idProducto == detalle.producto.idProducto).first()
+        if not producto_en_detalle:
+            raise HTTPException(status_code=400, detail="Uno o más productos no existen.")
+        if detalle.cantidad > producto_en_detalle.stock:
+            raise HTTPException(status_code=400, detail="Stock insuficiente para uno o más productos.")
+        
+        
+        producto_en_detalle.stock -= detalle.cantidad
+        db.add(producto_en_detalle)
+
+    # Creando el pedido
+    nuevo_pedido = Pedido(
+        idCliente=pedido.cliente.idCliente,
+        montoTotal=pedido.montoTotal,
+        estado=pedido.estado
+    )
+
+    db.add(nuevo_pedido)
+    db.commit()
+    db.refresh(nuevo_pedido)
+
+    # Creando el detalle de pedido
+    for detalle in pedido.detalles:
+        nuevo_detalle = DetallePedido(
+            idPedido=nuevo_pedido.idPedido,
+            producto=producto_en_detalle,
+            precioUnitario=detalle.precioUnitario,
+            cantidad=detalle.cantidad,
+            subTotal=detalle.subTotal
+        )
+        db.add(nuevo_detalle)
+
+    db.commit()
+    return nuevo_pedido
+
+
 @router.post("/marcasMasivas/")
 async def cargar_marcas_masivas(marcas: List[MarcaCreate], db: Session = Depends(get_db)):
     resultados = {"exitosos": [], "errores": []}
@@ -184,7 +220,16 @@ async def cargar_clientes_masivos(clientes: List[ClienteCreate], db: Session = D
             resultados["errores"].append({"cliente": cliente.documento, "error": e.detail})
     return resultados
 
-
+@router.post("/pedidosMasivos/")
+async def cargar_pedidos_masivos(pedidos: List[PedidoCreate], db: Session = Depends(get_db)):
+    resultados = {"exitosos": [], "errores": []}
+    for pedido in pedidos:
+        try:
+            nuevo_pedido = crear_pedido(pedido, db)
+            resultados["exitosos"].append(nuevo_pedido)
+        except HTTPException as e:
+            resultados["errores"].append({"pedido": pedido.idPedido, "error": e.detail})
+    return resultados
 
 
 

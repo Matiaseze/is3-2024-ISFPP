@@ -2,7 +2,7 @@ from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 from models.Pago import Pago, TipoMedioPago
 from models.Cliente import Cliente
-from models.Pedido import Pedido
+from models.Pedido import Pedido, EstadoPedido
 from schemas.Pago import PagoCreate, PagoResponse
 from database import get_db
 from typing import List
@@ -13,6 +13,7 @@ def calcular_saldo_pendiente(pedido_id, db):
 
     pedido = db.query(Pedido).filter(Pedido.idPedido == pedido_id).first()
     if not pedido:
+        
         raise HTTPException(status_code=404, detail="Pedido no encontrado.")
 
     # Sumar los montos abonados de todos los pagos relacionados con el pedido
@@ -38,7 +39,7 @@ def get_pago(idPago: int, db: Session = Depends(get_db)):
 
 @router.post("/crear_pago", response_model=PagoCreate, status_code=201)
 def crear_pago(pago: PagoCreate, db: Session = Depends(get_db)):
-    print("ESTOY CREANDO UN PAGOOOOOOO")
+
     pedido_a_pagar = db.query(Pedido).filter(Pedido.idPedido == pago.idPedido).first()
     if not pedido_a_pagar:
         raise HTTPException(status_code=404, detail="No se encontró el pedido.")
@@ -124,8 +125,9 @@ def cancelar_pago(idPago: int, db: Session = Depends(get_db)):
     if not db_pedido:
         raise HTTPException(status_code=404, detail="El pedido asociado no existe.")
     
-    if db_pedido.estado == "PAGADO":
-        raise HTTPException(status_code=400, detail="No se puede eliminar el pago porque el pedido está en estado 'PAGADO'.")
+    print(db_pedido.estado)
+    if db_pedido.estado == EstadoPedido.PAGADO:
+        raise HTTPException(status_code=400, detail="No se puede eliminar el pago porque el pedido está PAGADO.")
 
     # Se elimina el pago mientras el estado del pedido NO sea PAGADO
     db.delete(db_pago)
